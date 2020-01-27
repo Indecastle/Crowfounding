@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crowfounding", "Crowfounding.csproj", "{80FF1A97-DD43-4ECE-AEEF-C4F72699C1C5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{80FF1A97-DD43-4ECE-AEEF-C4F72699C1C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80FF1A97-DD43-4ECE-AEEF-C4F72699C1C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80FF1A97-DD43-4ECE-AEEF-C4F72699C1C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80FF1A97-DD43-4ECE-AEEF-C4F72699C1C5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {63A5BDF4-F150-4933-AA7D-70980EB4F7D4}
+	EndGlobalSection
+EndGlobal
