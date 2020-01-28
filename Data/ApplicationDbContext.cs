@@ -14,5 +14,54 @@ namespace Crowfounding.Data
         {
             Database.EnsureCreated();
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Company>()
+                .HasOne(a => a.Owner)
+                .WithMany(d => d.Companies)
+                .HasForeignKey(d => d.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Donation>()
+                .HasOne(a => a.Payer)
+                .WithMany(d => d.Donations)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Comment>()
+                .HasOne(a => a.CompanyComment)
+                .WithMany(d => d.Comments)
+                .HasForeignKey(d => d.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ImagesCompany>()
+                .HasOne(a => a.Images)
+                .WithMany(d => d.CompanyImages)
+                .HasForeignKey(d => d.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<WebBrowser>()
+                .HasOne(a => a.Owner)
+                .WithMany(d => d.WebBrowsers)
+                .HasForeignKey(d => d.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Rating>()
+                .HasOne(a => a.Ranker)
+                .WithMany(d => d.Ratings)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+
+        public DbSet<User> User { get; set; }
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<Donation> Donations { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<ImagesCompany> CompanyImages { get; set; }
+        public DbSet<WebBrowser> WebBrowsers { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
     }
 }

@@ -1,5 +1,69 @@
 ﻿@page "/"
+@page "/Main"
+@page "/Index"
+@inject ApplicationDbContext _db;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject UserManager<User> _userManager;
+@inject NavigationManager NavigationManager
+@inject IStringLocalizer<Index> L
 
-<h1>Hello, world!</h1>
+<h3 class="text-center">@L["Most_Rating_Companies"]</h3>
+<br />
+<body>
+    @if (Model?.ToList().Count > 0)
+    {
+        <div class="row">
 
-Welcome to your new app.
+            @foreach (var company in Model.OrderByDescending(s => s.Rating).Take(3))
+            {
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img src="~/images/@company.MainImage" style='width:160px; height:200px;' asp-append-version="true" />
+                        <div class="caption">
+                            <h3>Name: @company.Name</h3>
+                            <h4>Theme: @company.Theme</h4>
+                            <h5>Rating: @company.Rating</h5>
+                            <p><a class="btn btn-primary" role="button" onclick="RedirectToCompany(@company.Id)">Open</a></p>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <h3>@L["No_company"]</h3>
+    }
+
+</body>
+
+@code {
+    public IEnumerable<Company> Model { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Model = await _db.Companies.ToListAsync();
+    }
+
+    public void Dispose()
+    {
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+        }
+    }
+
+    public void RedirectToCompany(Company company)
+    {
+        NavigationManager.NavigateTo("/" + company.Name);
+    }
+}

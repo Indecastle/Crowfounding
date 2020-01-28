@@ -1,0 +1,24 @@
+﻿@page "/Culture/ChangeLanguage"
+@inject NavigationManager NavigationManager
+@inject IStringLocalizer<ChangeCulture> L
+
+<h3>@L["Select_your_language"]</h3>
+
+<select @onchange="OnSelected">
+    <option>Select...</option>
+    <option value="en-US">English</option>
+    <option value="ru-RU">Russian</option>
+</select>
+
+@code {
+    private void OnSelected(ChangeEventArgs e)
+    {
+        var culture = (string)e.Value;
+        var uri = new Uri(NavigationManager.Uri)
+            .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+        var query = $"?culture={Uri.EscapeDataString(culture)}&" +
+            $"redirectUri={Uri.EscapeDataString(uri)}";
+
+        NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
+    }
+}
