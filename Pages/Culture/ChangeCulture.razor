@@ -1,13 +1,19 @@
-﻿@page "/Culture/ChangeLanguage"
+﻿@page "/Settings"
 @inject NavigationManager NavigationManager
 @inject IStringLocalizer<ChangeCulture> L
 
 <h3>@L["Select_your_language"]</h3>
 
 <select @onchange="OnSelected">
-    <option>Select...</option>
-    <option value="en-US">English</option>
-    <option value="ru-RU">Russian</option>
+    <option>Select Language...</option>
+    <option value="en">English</option>
+    <option value="ru">Russian</option>
+</select>
+
+<select @onchange="OnSelectedTheme">
+    <option>Select Theme...</option>
+    <option value="Original">Original</option>
+    <option value="Black">Black</option>
 </select>
 
 @code {
@@ -20,5 +26,16 @@
             $"redirectUri={Uri.EscapeDataString(uri)}";
 
         NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
+    }
+
+    private void OnSelectedTheme(ChangeEventArgs e)
+    {
+        var culture = (string)e.Value;
+        var uri = new Uri(NavigationManager.Uri)
+            .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+        var query = $"?theme={Uri.EscapeDataString(culture)}&" +
+            $"redirectUri={Uri.EscapeDataString(uri)}";
+
+        NavigationManager.NavigateTo("/Culture/SetTheme" + query, forceLoad: true);
     }
 }

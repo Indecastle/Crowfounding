@@ -6,39 +6,34 @@ using Crowfounding.Data;
 using Crowfounding.Models;
 using Crowfounding.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Crowfounding
 {
-    public class SetCultureModel : PageModel
+    public class SetThemeModel : PageModel
     {
         private readonly UserManager<User> _userManager;
         private readonly ApplicationDbContext _db;
 
-        public SetCultureModel(ApplicationDbContext db,
+        public SetThemeModel(ApplicationDbContext db,
             UserManager<User> userManager)
         {
             _userManager = userManager;
             _db = db;
         }
 
-        public async Task<IActionResult> OnGetAsync(string culture, string redirectUri)
+        public async Task<IActionResult> OnGetAsync(string theme, string redirectUri)
         {
-            if (culture != null && Enum.TryParse(culture, true, out CultureType cultureEnum))
+            if (theme != null && Enum.TryParse(theme, true, out ThemeType themeEnum))
             {
-                HttpContext.Response.Cookies.Append(
-                    CookieRequestCultureProvider.DefaultCookieName,
-                    CookieRequestCultureProvider.MakeCookieValue(
-                        new RequestCulture(culture)));
+                HttpContext.Response.Cookies.Append("Theme", theme);
 
                 if (User.Identity.IsAuthenticated)
                 {
                     User user = await _userManager.GetUserAsync(User);
-                    user.Language = cultureEnum;
+                    user.Theme = themeEnum;
                     await _db.SaveChangesAsync();
-                    
                 }
             }
 

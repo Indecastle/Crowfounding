@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Crowfounding.Services;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace Crowfounding.Models
         public string Name { get; set; }
         public DateTime DateRegister { get; set; }
         public DateTime DataLogin { get; set; }
+        public ThemeType Theme { get; set; }
+        public CultureType Language { get; set; }
         public bool IsBlocked { get; set; }
 
         public virtual ICollection<Company> Companies { get; set; }

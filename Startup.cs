@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Crowfounding.Data;
 using System.Globalization;
+using Crowfounding.Services;
 
 namespace Crowfounding
 {
@@ -87,6 +88,8 @@ namespace Crowfounding
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<User>>();
             services.AddSingleton<WeatherForecastService>();
+            services.AddScoped<ThemeService>();
+            services.AddHttpContextAccessor();
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             var supportedCultures = new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("ru") };

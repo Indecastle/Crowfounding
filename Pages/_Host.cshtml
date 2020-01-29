@@ -4,6 +4,7 @@
 @{
     Layout = null;
 }
+@inject ThemeService _themeService
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +14,11 @@
     <title>Crowfounding</title>
     <base href="~/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link href="css/site.css" rel="stylesheet" />
+    @_themeService.GetThemeHtml()
+    @if (User.Identity.IsAuthenticated)
+    {
+
+    }
 </head>
 <body>
     <app>

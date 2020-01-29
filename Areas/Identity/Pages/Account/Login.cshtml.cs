@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Localization;
+using Crowfounding.Services;
 
 namespace Crowfounding.Areas.Identity.Pages.Account
 {
@@ -83,6 +85,10 @@ namespace Crowfounding.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    User user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+                    HttpContext.Response.Cookies.Append("Theme", user.Theme.ToString());
+                    HttpContext.Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, 
+                        CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(user.Language.ToString())));
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

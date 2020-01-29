@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Crowfounding.Services;
+using Microsoft.AspNetCore.Localization;
 
 namespace Crowfounding.Areas.Identity.Pages.Account
 {
@@ -47,6 +49,11 @@ namespace Crowfounding.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            //[EmailAddress]
+            [Display(Name = "Name")]
+            public string Name { get; set; }
+
+            [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -75,7 +82,8 @@ namespace Crowfounding.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = Input.Email, Email = Input.Email };
+                var user = new User { UserName = Input.Email, Email = Input.Email, DataLogin = DateTime.Now, DateRegister = DateTime.Now, IsBlocked = false, Name = Input.Name, 
+                    Language = CultureType.en, Theme = ThemeType.Original };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
@@ -89,8 +97,8 @@ namespace Crowfounding.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = user.Id, code = code },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -99,6 +107,9 @@ namespace Crowfounding.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
+                        HttpContext.Response.Cookies.Append("Theme", ThemeType.Original.ToString());
+                        HttpContext.Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, 
+                            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture("en")));
                         return LocalRedirect(returnUrl);
                     }
                 }
