@@ -1,0 +1,101 @@
+﻿@page "/CreateCompany"
+@using BlazorInputFile;
+@attribute [Authorize]
+<h2>CreateCompany</h2>
+
+<EditForm Model="@_viewModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="Nameid">Name:</label>
+
+        <InputText @bind-Value="_viewModel.Name" id="Nameid" class="form-control" aria-describedby="name..." placeholder="name..." />
+        <ValidationMessage For="@(() => _viewModel.Name)" />
+    </div>
+    <div class="form-group">
+        <label for="selectid">Theme:</label>
+        <InputSelect @bind-Value="_viewModel.Theme" class="form-control" id="selectid">
+            <option value="@Theme.Education">Education</option>
+            <option value="@Theme.Electronics">Electronics</option>
+            <option value="@Theme.Food">Food</option>
+            <option value="@Theme.ITcompany">ITcompany</option>
+            <option value="@Theme.Service">Service</option>
+        </InputSelect>
+        <ValidationMessage For="@(() => _viewModel.Theme)" />
+    </div>
+    <div class="form-group shadow-textarea">
+        <label for="DescrId">Description:</label>
+        <InputTextArea class="form-control" rows="5" placeholder="Write Description with Markdown..." id="DescrId" @bind-Value="_viewModel.Description" />
+        <ValidationMessage For="@(() => _viewModel.Description)" />
+    </div>
+    <div class="form-group">
+        End:
+        <InputDate class="form-control" @bind-Value="_viewModel.End" />
+        <ValidationMessage For="@(() => _viewModel.End)" />
+    </div>
+    <div class="form-group">
+        <label for="NeedMoneyid">NeedMoney:</label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">$</div>
+            </div>
+            <InputNumber class="form-control" aria-label="Amount (to the nearest dollar)" id="NeedMoneyid" @bind-Value="_viewModel.NeedMoney" />
+            <div class="input-group-append">
+                <div class="input-group-text">.00</div>
+            </div>
+        </div>
+        <ValidationMessage For="@(() => _viewModel.NeedMoney)" />
+    </div>
+    <div class="form-group">
+        <label for="URLVideoid">NeedMoney:</label>
+        <InputText @bind-Value="_viewModel.URLVideo" class="form-control" id="URLVideoid" />
+        <ValidationMessage For="@(() => _viewModel.URLVideo)" />
+    </div>
+
+    <div class="custom-file">
+        <InputFile OnChange="LoadMainImage" class="custom-file-input" id="MainImageId" />
+        <label class="custom-file-label" for="MainImageId">Choose Main Image...</label>
+        <ValidationMessage For="@(() => _viewModel.MainImage)" />
+    </div>
+
+    <div class="custom-file">
+        <InputFile multiple OnChange="LoadImages" class="custom-file-input" id="ImagesId" />
+        <label class="custom-file-label" for="ImagesId">Choose images...</label>
+        
+    </div>
+
+    <div>
+        <input class="btn" type="submit" value="Create" />
+    </div>
+</EditForm>
+
+
+@code {
+    private CompanyViewModel _viewModel = new CompanyViewModel { Theme = Theme.Education };
+    private IFileListEntry MainImage { get; set; }
+    private IFileListEntry[] Images { get; set; }
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("OnValidSubmit");
+    }
+
+    async Task LoadMainImage(IFileListEntry[] files)
+    {
+        var file = files.FirstOrDefault();
+        if (file != null)
+        {
+            _viewModel.MainImage = file;
+        }
+    }
+
+    async Task LoadImages(IFileListEntry[] files)
+    {
+        var file = files.FirstOrDefault();
+        if (file != null)
+        {
+            _viewModel.Images = files;
+        }
+    }
+}
