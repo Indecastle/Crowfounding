@@ -1,9 +1,15 @@
 ﻿@page "/CreateCompany"
 @using BlazorInputFile;
+@inject IS3Service _is3;
+@inject ApplicationDbContext _db;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject UserManager<User> _userManager;
+@inject NavigationManager NavigationManager
+@inject IStringLocalizer<CreateCompany> L
 @attribute [Authorize]
 <h2>CreateCompany</h2>
 
-<EditForm Model="@_viewModel" OnValidSubmit="HandleValidSubmit">
+<EditForm EditContext="@_editContext" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -48,37 +54,61 @@
         <ValidationMessage For="@(() => _viewModel.NeedMoney)" />
     </div>
     <div class="form-group">
-        <label for="URLVideoid">NeedMoney:</label>
+        <label for="URLVideoid">URLVideo:</label>
         <InputText @bind-Value="_viewModel.URLVideo" class="form-control" id="URLVideoid" />
         <ValidationMessage For="@(() => _viewModel.URLVideo)" />
     </div>
 
-    <div class="custom-file">
-        <InputFile OnChange="LoadMainImage" class="custom-file-input" id="MainImageId" />
-        <label class="custom-file-label" for="MainImageId">Choose Main Image...</label>
-        <ValidationMessage For="@(() => _viewModel.MainImage)" />
+    <div class="form-group">
+        <div class="custom-file">
+            <InputFile OnChange="LoadMainImage" class="custom-file-input" id="MainImageId" />
+            <label class="custom-file-label" for="MainImageId">Choose Main Image...</label>
+            <ValidationMessage For="@(() => _viewModel.isLoadedMainImage)" />
+        </div>
     </div>
+    <div class="form-group">
+        <div class="custom-file">
+            <InputFile multiple OnChange="LoadImages" class="custom-file-input" id="ImagesId" />
+            <label class="custom-file-label" for="ImagesId">Choose images...</label>
 
-    <div class="custom-file">
-        <InputFile multiple OnChange="LoadImages" class="custom-file-input" id="ImagesId" />
-        <label class="custom-file-label" for="ImagesId">Choose images...</label>
-        
+        </div>
     </div>
 
     <div>
-        <input class="btn" type="submit" value="Create" />
+        <input class="btn btn-primary" type="submit" value="Create" />
     </div>
 </EditForm>
 
 
 @code {
     private CompanyViewModel _viewModel = new CompanyViewModel { Theme = Theme.Education };
+    private EditContext _editContext;
     private IFileListEntry MainImage { get; set; }
     private IFileListEntry[] Images { get; set; }
 
-    private void HandleValidSubmit()
+    protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("OnValidSubmit");
+        await base.OnInitializedAsync();
+
+        _editContext = new EditContext(_viewModel);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var claimUser = authState.User;
+        var owner = await _userManager.GetUserAsync(claimUser);
+        Company company = new Company { Name = _viewModel.Name, Theme = _viewModel.Theme, End = _viewModel.End, NumberUsers = 0,
+            Rating = 0, Description = _viewModel.Description, CurrentMoney = 0, NeedMoney = _viewModel.NeedMoney, URLVideo = _viewModel.URLVideo,
+            DataCreate = DateTime.Now, LastEdit = DateTime.MinValue, EndAtNextDay = false, IsEnd = false, UserID = owner.Id, MainImage = _viewModel.MainImage};
+        if (_viewModel.Images != null)
+        {
+            company.CompanyImages = _viewModel.Images.Select(imgUrl => new ImagesCompany { PhotoPath = imgUrl }).ToList();
+        }
+        await _db.Companies.AddAsync(company);
+        await _db.SaveChangesAsync();
+        Console.WriteLine("OnValidSubmit @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        NavigationManager.NavigateTo("/");
     }
 
     async Task LoadMainImage(IFileListEntry[] files)
@@ -86,16 +116,50 @@
         var file = files.FirstOrDefault();
         if (file != null)
         {
-            _viewModel.MainImage = file;
+            using (var ms = new MemoryStream())
+            {
+                Task task1 = file.Data.CopyToAsync(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                await task1;
+                Console.WriteLine("######### CopyEnded");
+                string filePath = "TempFiles/" + $"{file.Name}-{Guid.NewGuid()}-{Path.GetExtension(file.Name)}";
+                await _is3.UploadObjectAsync(ms, filePath);
+                string urlLink = _is3.GeneratePreSignedURL(filePath, false, file.Name);
+                Console.WriteLine("######### UploadedToS3");
+
+                _viewModel.MainImage = urlLink;
+                _viewModel.isLoadedMainImage = true;
+                _editContext.Validate();
+                StateHasChanged();
+            }
+
+
         }
     }
 
     async Task LoadImages(IFileListEntry[] files)
     {
-        var file = files.FirstOrDefault();
-        if (file != null)
+        List<string> urlLinks = new List<string>();
+        if (files != null && files.Length > 0)
         {
-            _viewModel.Images = files;
+            foreach(var file in files)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    Task task1 = file.Data.CopyToAsync(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    await task1;
+                    Console.WriteLine("######### CopyEnded");
+                    string filePath = "TempFiles/" + $"{file.Name}-{Guid.NewGuid()}-{Path.GetExtension(file.Name)}";
+                    await _is3.UploadObjectAsync(ms, filePath);
+                    urlLinks.Add(_is3.GeneratePreSignedURL(filePath, false, file.Name));
+                    Console.WriteLine("######### UploadedToS3");
+
+
+                }
+            }
+            _viewModel.Images = urlLinks;
+            Console.WriteLine("Images Loaded ------------------------------");
         }
     }
 }

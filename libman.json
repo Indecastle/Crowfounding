@@ -15,6 +15,14 @@
         "dist/js/bootstrap.min.js",
         "dist/js/bootstrap.bundle.min.js"
       ]
+    },
+    {
+      "library": "font-awesome@5.11.2",
+      "destination": "wwwroot/font-awesome/"
+    },
+    {
+      "library": "font-awesome-animation@0.2.1",
+      "destination": "wwwroot/font-awesome-animation/"
     }
   ]
 }

@@ -18,9 +18,9 @@ using Crowfounding.Data;
 using Crowfounding.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Crowfounding.Data;
 using System.Globalization;
 using Crowfounding.Services;
+using Amazon.S3;
 
 namespace Crowfounding
 {
@@ -98,10 +98,14 @@ namespace Crowfounding
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en");
                 options.SupportedUICultures = supportedCultures;
             });
+
+            services.AddSingleton<IS3Service, S3Service>();
+            services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
+            services.AddAWSService<IAmazonS3>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IS3Service _is3)
         {
             if (env.IsDevelopment())
             {

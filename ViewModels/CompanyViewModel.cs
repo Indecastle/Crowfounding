@@ -36,11 +36,12 @@ namespace Crowfounding.ViewModels
         [Display(Name = "URL")]
         public string URLVideo { get; set; }
 
-        [Required(AllowEmptyStrings = false, 
-            ErrorMessage = "need Main Image")]
-        public IFileListEntry MainImage { get; set; }
-
-        [Display(Name = "Images")]
-        public IFileListEntry[] Images { get; set; }
+        [Required]
+        [Range(typeof(bool), "true", "true",
+        ErrorMessage = "need Main Image.")]
+        public bool isLoadedMainImage { get; set; }
+        
+        public string MainImage { get; set; }
+        public List<string> Images { get; set; }
     }
 }
