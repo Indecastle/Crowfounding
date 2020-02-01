@@ -8,147 +8,49 @@
 @inject IStringLocalizer<CompanyView> L
 @attribute [Authorize]
 
-@if (Model != null)
-{
+
+<div class="container">
     <AuthorizeView>
         <Authorized>
-            <br />
-            <ul class="nav nav-tabs nav-justified">
-                <li role="presentation" onclick="RedirectToComment(@Model.Id)"><a>Comments</a></li>
-                <li role="presentation" onclick="RedirectToDonate(@Model.Id)"><a>Donate</a></li>
-                <li role="presentation" onclick="RedirectToRating(@Model.Id)"><a>Rating</a></li>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link @CheckActivePartial(1)" @onclick="(e => ActivePartial = 1)">Main</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @CheckActivePartial(2)" @onclick="(e => ActivePartial = 2)">Comments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @CheckActivePartial(3)" @onclick="(e => ActivePartial = 3)">Donate</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @CheckActivePartial(4)" @onclick="(e => ActivePartial = 4)">Rating</a>
+                </li>
             </ul>
         </Authorized>
     </AuthorizeView>
 
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <h2>Company @Model.Name</h2>
-        </div>
-        @if (Model.UserID == user.Id && Model.IsEnd)
-        {
-            <div class="col-md-offset-10">
-                <a class="btn btn-danger" onclick="RedirectTake(@Model.Id)">Take money and end company</a>
-            </div>
-        }
-        <div class="col-md-12 text-center"><h3>Theme of Company: @Model.Theme</h3></div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-8"><h4>Rating Comapany: @Model.Rating </h4></div>
-        <div class="col-md-8"><h5>Money @Model.CurrentMoney / @Model.NeedMoney</h5></div>
-
-    </div>
-    @if (Model.EndAtNextDay == true)
+    @switch (ActivePartial)
     {
-        <h4 class="text-center text-danger"> Enformation! Company will be end tomorrow! </h4>
+        case 1: <CompanyViewMain CompanyId="CompanyId"/>
+            break;
+        case 2: <CompanyViewComments />
+            break;
+        case 3: <CompanyViewDonate CompanyId="CompanyId"/>
+            break;
+        case 4: <CompanyViewRating />
+            break;
     }
-    <hr />
-    <h3 class="text-center">Photos</h3>
-    @if (Model.CompanyImages.Count > 0)
-    {
-        int count = 0;
-        <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="0">
-            <ol class="carousel-indicators">
-                @for (int i = 0; i < Model.CompanyImages.Count; i++)
-                {
-                    if (i == 0)
-                    {
-                        <li data-target="#myCarousel" data-slide-to="@i" class="active"></li>
-                    }
-                    else
-                    {
-                        <li data-target="#myCarousel" data-slide-to="@i"></li>
-                    }
-                }
-            </ol>
-            <div class="carousel-inner">
+</div>
 
-                @foreach (var image in Model.CompanyImages)
-                {
-                    if (count == 0)
-                    {
-                        count++;
-                        <div class="carousel-item active" style="transition: transform .6s ease-in-out,-webkit-transform .6s ease-in-out;">
-                            <img src="@image.PhotoPath" class="" style='width:260px; height:300px; margin: 0 auto; display: block;' />
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="carousel-item " style="transition: transform .6s ease-in-out,-webkit-transform .6s ease-in-out;">
-                            <img src="@image.PhotoPath" class="" style='width:260px; height:300px; margin: 0 auto; display: block;' />
-                        </div>
-                    }
-                }
-                <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
-                    <i class="fas fa-chevron-left" style="color: darkgray"></i>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
-                    <i class="fas fa-chevron-right" style="color: darkgray"></i>
-                    <span class="sr-only">Next</span>
-                </a>
-            </div>
-        </div>
-    }
-    else
-    {
-        <h3 class="text-center">No Photos in Company</h3>
-    }
-
-    <hr />
-    <h3 class="text-center">Video Company</h3>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/@Model.URLVideo"
-            frameborder="0"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen></iframe>
-    <hr />
-
-
-    <h3 class="text-center">Description</h3>
-    <div>
-        @MarkDownParser.Parse(Model.Description)
-    </div>
-}
 
 
 @code {
     [Parameter]
     public int CompanyId { get; set; }
 
-    public Company Model { get; set; }
-    public User user { get; set; }
-
-
-
-    protected override async Task OnInitializedAsync()
+    private int ActivePartial { get; set; } = 1;
+    private string CheckActivePartial(int partial)
     {
-        await base.OnInitializedAsync();
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var claimUser = authState.User;
-        user = await _userManager.GetUserAsync(claimUser);
-
-        if (CompanyId != 0)
-        {
-            Model = await _db.Companies.Include(c => c.CompanyImages).FirstOrDefaultAsync(c => c.Id == CompanyId);
-        }
-    }
-
-    public void Dispose()
-    {
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-
-        }
-
-    }
-
-    public void RedirectToCompany(Company company)
-    {
-        NavigationManager.NavigateTo("/" + company.Name);
+        return partial == ActivePartial ? "active disabled" : "";
     }
 }

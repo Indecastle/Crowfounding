@@ -16,13 +16,15 @@
     <link rel="stylesheet" href="~/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/css/File.css" />
+    <link rel="stylesheet" href="~/css/ViewStyleSheet.css" />
+    <link rel="stylesheet" href="~/css/donate.css" />
     @_themeService.GetThemeHtml()
     @if (User.Identity.IsAuthenticated)
     {
 
     }
 </head>
-<body>
+<body style="overflow-y: overlay;">
     <app>
         <component type="typeof(App)" render-mode="Server" />
     </app>
@@ -44,6 +46,8 @@
     <script src="~/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/font-awesome/js/all.min.js"></script>
     <script src="~/js/inputfile.js"></script>
+    <script src="~/js/MyScripts.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
 
 </body>
 </html>

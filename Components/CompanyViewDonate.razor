@@ -1,0 +1,128 @@
+﻿@inject ApplicationDbContext _db;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject UserManager<User> _userManager;
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime;
+@inject IStringLocalizer<CompanyViewMain> L
+
+@if (Model != null)
+{
+
+    <div class="page-header">
+        <h3>Donate to company </h3>
+    </div>
+    <br>
+    @if (!Model.IsEnd)
+    {
+        <h3 class="text-center">Test</h3>
+        <br>
+        <div class="row">
+            <div class="col-md-4">
+                <form method="post" asp-controller="Company" asp-action="Donate">
+                    <div class="form-group">
+                        <input asp-for="CompanyId" value="@Model.Id" hidden />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MonyDonate">Donate</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">$</div>
+                            </div>
+                            <input type="text" class="form-control" asp-for="MonyDonate" aria-label="Amount (to the nearest dollar)">
+                            <div class="input-group-append">
+                                <div class="input-group-text">.00</div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="MonyDonate" class="text-danger"></span>
+                    </div>
+
+                    <div>
+                        <input class="btn" type="submit" value="Donate" />
+                    </div>
+
+
+                </form>
+                <br />
+                <a class="btn btn-primary" onclick="RedirectToCompany(@Model.Id)" value="Donate">Back</a>
+            </div>
+        </div>
+        <br>
+        <h3 class="text-center">Yandex</h3>
+        <br>
+        <iframe src="https://money.yandex.ru/quickpay/shop-widget?writer=seller&targets=Donation%20Company&targets-hint=&default-sum=1000&button-text=14&payment-type-choice=on&fio=on&mail=off&hint=&successURL=https%3A%2F%2Flocalhost%3A5001%2F&quickpay=shop&account=410017625025321" width="100%" height="223" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+        <br>
+        <h3 class="text-center">Scripe</h3>
+        <br>
+
+        <form asp-action="Charge" asp-controller="Company" method="post" id="payment-form">
+            <div class="">
+                <label for="card-element">
+                    Credit or debit card
+                </label>
+                <div id="card-element">
+                    <!-- A Stripe Element will be inserted here. -->
+                </div>
+
+                <!-- Used to display form errors. -->
+                <div id="card-errors" role="alert"></div>
+            </div>
+            <br>
+            <input class="token" asp-for="Token" type="text" hidden disabled />
+            <div class="form-group">
+                <input asp-for="CompanyId" value="@Model.Id" hidden />
+            </div>
+            <label class="label label-default">Money:</label>
+            <input asp-for="Total" />
+            <input class="input-group-text d-inline-block" asp-for="Email" type="email" value="@user.UserName" disabled />
+
+            <button type="submit" class="btn btn-danger">Submit Payment</button>
+            <div asp-validation-summary="All" class="text-danger"></div>
+        </form>
+    }
+    else
+    {
+        <h3 class="text-center text-danger"> Crowdfunding company end. Thanks for donate.</h3>
+    }
+}
+
+
+@code {
+    [Parameter]
+    public int CompanyId { get; set; }
+
+    public Company Model { get; set; }
+    public User user { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var claimUser = authState.User;
+        user = await _userManager.GetUserAsync(claimUser);
+        if (CompanyId != 0)
+        {
+            Model = await _db.Companies.Include(c => c.CompanyImages).FirstOrDefaultAsync(c => c.Id == CompanyId);
+        }
+    }
+
+    public void Dispose()
+    {
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await JsRuntime.InvokeVoidAsync("initCompanyViewDonate");
+            }
+            catch (JSException)
+            {
+            }
+            
+        }
+    }
+
+}
