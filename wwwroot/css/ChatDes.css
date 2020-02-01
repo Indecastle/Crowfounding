@@ -1,0 +1,281 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+
+for details on configuring this project to bundle and minify static web assets. */
+
+
+
+
+
+/* Chat containers */
+#chat .container {
+    background-color: #d4d1d4;
+    border-radius: 30px;
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+    overflow-x: overlay;
+}
+
+#chat .sender {
+    font-size: 0.8em;
+}
+
+/* Darker chat container */
+#chat .darker {
+    border-color: #fff;
+    background-color: #6e00ff;
+}
+
+/* Clear floats */
+#chat .container::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* Style images */
+#chat .container img {
+    float: left;
+    max-width: 60px;
+    width: 100%;
+    margin-right: 20px;
+    border-radius: 50%;
+}
+
+    /* Style the right image */
+    #chat .container img.right {
+        float: right;
+        margin-left: 20px;
+        margin-right: 0;
+        border-radius: 50%;
+    }
+
+/* Style time text */
+#chat .time-right {
+    float: right;
+    color: #000000;
+}
+
+/* Style time text */
+#chat .time-left {
+    float: left;
+}
+
+#chat .text-righte {
+    text-align: right;
+}
+
+/* Style time text */
+#chat .text-lefte {
+    text-align: left;
+    color: #fff;
+}
+
+
+
+
+
+.comment-sender {
+    margin-bottom: 0.5rem;
+}
+
+.comment-text {
+    white-space: pre-wrap;
+    display: grid;
+    word-wrap: break-word;
+    width: max-content;
+}
+
+    .comment-text p {
+        display: inline-block;
+    }
+
+    .comment-text h1 {
+        display: inline-block;
+    }
+
+    .comment-text h2 {
+        display: inline-block;
+    }
+
+    .comment-text h3 {
+        display: inline-block;
+    }
+
+    .comment-text h4 {
+        display: inline-block;
+    }
+
+    .comment-text h5 {
+        display: inline-block;
+    }
+
+    .comment-text h6 {
+        display: inline-block;
+    }
+
+    .comment-text ul {
+        margin-top: 0;
+        margin-bottom: 0;
+        white-space: normal;
+        list-style-type: disc;
+        margin-block-start: 0em;
+        margin-block-end: 0em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+
+    .comment-text ol {
+        margin-top: 0;
+        margin-bottom: 0;
+        white-space: normal;
+        list-style-type: disc;
+        margin-block-start: 0em;
+        margin-block-end: 0em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+
+    .comment-text li {
+        margin-top: 0;
+        margin-bottom: 0;
+        white-space: normal;
+        list-style-type: disc;
+        margin-block-start: 0em;
+        margin-block-end: 0em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+
+    .comment-text > table {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .comment-text > img {
+        float: left !important;
+        max-width: 100px !important;
+        width: 100% !important;
+        margin-right: 20px !important;
+        border-radius: 20% !important;
+    }
+
+    .comment-text > a {
+        color: #002854;
+    }
+
+
+.chat_field {
+    position: relative;
+    margin: 5px 0 5px 0;
+    width: 50%;
+    font-family: 'Roboto';
+    font-size: 12px;
+    line-height: 30px;
+    font-weight: 500;
+    color: #4b4b4b;
+    -webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    border: none;
+    outline: none;
+    display: inline-block;
+    white-space: pre-line
+}
+
+    .chat_field.chat_message {
+        height: 30px;
+        resize: none;
+        font-size: 13px;
+        font-weight: 400;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.fileContainer {
+    display: block;
+    width: 100%;
+    height: calc(4.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    /* background-clip: padding-box; */
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    overflow: auto;
+    resize: vertical;
+}
+
+    .fileContainer [type=file] {
+        cursor: pointer;
+        display: inline-block;
+        font-size: 999px;
+        filter: alpha(opacity=0);
+        min-height: 100%;
+        min-width: 100%;
+        opacity: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+.fileContainerFileName {
+    width: 360px;
+    border: 1px solid #a0a0a0;
+    display: inline-block;
+    padding: 0.5em;
+    border-right: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.fileContainerButton {
+    padding: 0.5em;
+    border: 1px solid #a0a0a0;
+    float: right;
+    display: inline-block;
+}
+
+.fileContainerDragOver {
+    background-color: lightgray;
+    border: 2px solid #808080;
+}
+
+.mydiv1 {
+    display: block;
+    width: 100%;
+    height: auto;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    /* background-clip: padding-box; */
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.mydisable {
+    display: none;
+}

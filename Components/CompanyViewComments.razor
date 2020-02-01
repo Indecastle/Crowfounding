@@ -1,5 +1,252 @@
-﻿<h3>CompanyViewComments</h3>
+﻿@using Westwind.AspNetCore.Markdown
+@using Microsoft.AspNetCore.Components;
+@using BlazorInputFile;
+@using System.IO;
+@inject ApplicationDbContext _db;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject UserManager<User> _userManager;
+@inject NavigationManager NavigationManager
+@inject IWebHostEnvironment _env;
+@inject SingleCommentService _chatService;
+@inject IJSRuntime JsRuntime;
+@inject IS3Service _is3;
+@implements IDisposable
+
+
+<div class="container ">
+    <div class="row ">
+        <div class="col-md-3" style="margin-bottom: 10px;">
+            <button type="button" class="btn btn-outline-info @(Comments.Any(m => m.Selecting) ? "":"mydisable")" @onclick="@RemoveSelectedComments">remove Comment</button>
+        </div>
+        <div class="col-md-6  " id="chat">
+            @if (Comments != null)
+            {
+                string contcolor;
+                @foreach (var comment in Comments.OrderBy(m => m.When))
+                {
+
+                    if (user.UserName == comment.UserName)
+                    {
+                        contcolor = comment.Selecting ? "bg-info" : "bg-primary";
+                        <div class="container darker @contcolor" @onmousedown="@(e => SelectComment(comment))">
+                            <p class="sender text-left text-white comment-sender">
+                                @comment.UserName
+                                @if (!comment.IsFile)
+                                {
+                                    <div class="float-right" @onclick="@(e => StartEditComment(comment))" @onmousedown:stopPropagation="true">
+                                        <i class="fas fa-edit fa-lg"></i>
+                                    </div>
+                                }
+                            </p>
+                            <div class="text-left text-white comment-text " @onmousedown:stopPropagation>@ChatHelper.ConvertUrl(comment)</div>
+                            <span class="time-left text-light">@comment.When.ToString()</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="container bg-light">
+                            <p class="sender text-left comment-sender">@comment.UserName</p>
+                            <div class="text-left text-dark comment-text">@ChatHelper.ConvertUrl(comment)</div>
+                            <span class="time-left">@comment.When.ToString()</span>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+    <div class="col-md-12">
+        <button type="button" class="btn btn-secondary @(IsEditing ? "":"mydisable")" style="margin-bottom: 10px;" @onclick="@StopEditComment">stop change</button>
+        <form method="post" action="#" enctype="multipart/form-data">
+            <label class="fileContainer mydisable" id="fileSelectBox" ondragleave="leaveDrop2(event)" ondrop="onDrop(event)" ondragover="dragOver(event)">
+                <InputFile multiple OnChange="ViewFile" />
+            </label>
+        </form>
+        <textarea id="chatSend" class="form-control" style="resize:none;" name="chat_comment" ondragover="dragOver2(event)" placeholder="Send a comment" rows="3" @bind-value="@newComment" @bind-value:event="oninput"></textarea>
+        <input type="submit" id="mybutton" @onclick="SendAll" class="btn btn-outline-primary btn-block" />
+        <div id="mylastpage"></div>
+    </div>
+</div>
+
+
+
+
+
 
 @code {
+    [Parameter]
+    public Company LocalCompany { get; set; }
+    public Company TotalCompany { get; set; }
+    [Parameter]
+    public User user { get; set; }
 
+
+    [Parameter]
+    public string chatId { get; set; }
+    //public GroupChat groupChat { get; set; }
+    private List<Comment> Comments { get; set; } = new List<Comment>();
+
+    public string newComment { get; set; } = null;
+    string userName { get; set; } = null;
+
+    private bool IsEditing { get; set; }
+    private Comment EditingComment { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (await _chatService.InitChat(LocalCompany, user))
+        {
+            TotalCompany = _chatService.TotalCompany;
+            TotalCompany.Sent += GotComment;
+            TotalCompany.Updated += UpdatedComments;
+            TotalCompany.ChangedComment += ChangedComment;
+            Comments = _chatService.LocalComments;
+
+        }
+        else
+            NavigationManager.NavigateTo("/");
+    }
+
+    public void Dispose()
+    {
+        if (TotalCompany != null)
+        {
+            TotalCompany.Sent -= GotComment;
+            TotalCompany.Updated -= UpdatedComments;
+            TotalCompany.ChangedComment -= ChangedComment;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JsRuntime.InvokeAsync<object>("initChatEvent");
+        }
+    }
+
+
+
+    public void GotComment(Comment newComment)
+    {
+        _chatService.GotComment(newComment);
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void UpdatedComments(List<Comment> removeComments)
+    {
+        _chatService.RemovedSelectedComments(removeComments);
+        Comments = _chatService.LocalComments;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void ChangedComment(string textComment, Comment editingComment)
+    {
+        _chatService.ChangedComment(textComment, editingComment);
+        InvokeAsync(StateHasChanged);
+    }
+
+
+
+    public async Task SendAll(MouseEventArgs e)
+    {
+        if (!String.IsNullOrWhiteSpace(newComment))
+        {
+            if (IsEditing)
+            {
+                _chatService.ChangeComment(newComment, EditingComment);
+                IsEditing = false;
+            }
+            else
+                _chatService.SendComment(newComment, user);
+            newComment = null;
+            SetFocus();
+        }
+    }
+
+    public void SelectComment(Comment Comment)
+    {
+        Comment.Selecting = !Comment.Selecting;
+    }
+
+    public void RemoveSelectedComments()
+    {
+        IsEditing = false;
+        newComment = null;
+        _chatService.RemoveSelectedComments();
+        SetFocus();
+    }
+
+    public void StartEditComment(Comment Comment)
+    {
+        IsEditing = true;
+        EditingComment = Comment;
+        newComment = EditingComment.Text;
+        SetFocus();
+    }
+
+    public void StopEditComment()
+    {
+        IsEditing = false;
+        newComment = null;
+    }
+
+    public async void SetFocus()
+    {
+        await JsRuntime.InvokeAsync<object>("setFocusToTextBox");
+    }
+
+
+
+
+
+
+
+
+
+
+    private string Token { get; set; }
+    const string DefaultStatus = "Drop a text file here to view it, or click to choose a file";
+    const int MaxFileSize = 5 * 1024 * 1024; // 5MB
+    string status = DefaultStatus;
+    string UrlShared;
+
+    string fileName;
+    string fileTextContents;
+
+    async Task ViewFile(IFileListEntry[] files)
+    {
+        var file = files.FirstOrDefault();
+        if (file == null)
+        {
+            return;
+        }
+        else if (file.Size > MaxFileSize)
+        {
+            status = $"That's too big. Max size: {MaxFileSize} bytes.";
+        }
+        else
+        {
+            status = "Loading...";
+
+            using (var ms = new MemoryStream())
+            {
+                Task task1 = file.Data.CopyToAsync(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                await task1;
+                Console.WriteLine("######### CopyEnded");
+                string filePath = "TempFiles/" + $"{file.Name}-{Guid.NewGuid()}-{Path.GetExtension(file.Name)}";
+                await _is3.UploadObjectAsync(ms, filePath);
+                string urlLink = _is3.GeneratePreSignedURL(filePath, false, file.Name);
+                Console.WriteLine("######### UploadedToS3");
+
+                _chatService.UploadImageComment(urlLink, file.Name);
+
+            }
+
+            status = DefaultStatus;
+        }
+        await InvokeAsync(StateHasChanged);
+    }
 }

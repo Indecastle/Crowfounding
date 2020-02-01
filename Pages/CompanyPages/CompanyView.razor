@@ -6,12 +6,18 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime;
 @inject IStringLocalizer<CompanyView> L
-@attribute [Authorize]
 
 
-<div class="container">
-    <AuthorizeView>
-        <Authorized>
+    <div class="container">
+        @if (Model != null)
+        {
+
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h2>Company @Model.Name</h2>
+                </div>
+            </div>
+        }
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a class="nav-link @CheckActivePartial(1)" @onclick="(e => ActivePartial = 1)">Main</a>
@@ -26,27 +32,43 @@
                     <a class="nav-link @CheckActivePartial(4)" @onclick="(e => ActivePartial = 4)">Rating</a>
                 </li>
             </ul>
-        </Authorized>
-    </AuthorizeView>
 
-    @switch (ActivePartial)
-    {
-        case 1: <CompanyViewMain CompanyId="CompanyId"/>
-            break;
-        case 2: <CompanyViewComments />
-            break;
-        case 3: <CompanyViewDonate CompanyId="CompanyId"/>
-            break;
-        case 4: <CompanyViewRating />
-            break;
-    }
-</div>
+
+            @switch (ActivePartial)
+            {
+                case 1:<CompanyViewMain Model="Model" User="User" />
+                    break;
+                case 2: <CompanyViewComments LocalCompany="Model" user="User" />
+                    break;
+                case 3: <CompanyViewDonate Model="Model" User="User" />
+                    break;
+                case 4: <CompanyViewRating Model="Model" User="User" />
+                    break;
+            }
+        </div>
 
 
 
 @code {
     [Parameter]
     public int CompanyId { get; set; }
+    [Parameter]
+    public Company Model { get; set; }
+    [Parameter]
+    public User User { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var claimUser = authState.User;
+        User = await _userManager.GetUserAsync(claimUser);
+
+        Model = await _db.Companies.Include(c => c.CompanyImages).FirstOrDefaultAsync(c => c.Id == CompanyId);
+        if(Model == null)
+            NavigationManager.NavigateTo("");
+    }
 
     private int ActivePartial { get; set; } = 1;
     private string CheckActivePartial(int partial)

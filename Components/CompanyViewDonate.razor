@@ -4,10 +4,10 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime;
 @inject IStringLocalizer<CompanyViewMain> L
+@using System.ComponentModel.DataAnnotations;
 
 @if (Model != null)
 {
-
     <div class="page-header">
         <h3>Donate to company </h3>
     </div>
@@ -15,36 +15,32 @@
     @if (!Model.IsEnd)
     {
         <h3 class="text-center">Test</h3>
+        <div class="col-md-8"><h5>Money @Model.CurrentMoney / @Model.NeedMoney</h5></div>
         <br>
         <div class="row">
-            <div class="col-md-4">
-                <form method="post" asp-controller="Company" asp-action="Donate">
-                    <div class="form-group">
-                        <input asp-for="CompanyId" value="@Model.Id" hidden />
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="MonyDonate">Donate</label>
-                        <div class="input-group">
+            <EditForm Model="_viewModel" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-row align-items-center">
+                    <div class="col-auto">
+                        <label class="sr-only" for="inlineFormInputGroup">Donate2</label>
+                        <div class="input-group mb-2">
                             <div class="input-group-prepend">
                                 <div class="input-group-text">$</div>
                             </div>
-                            <input type="text" class="form-control" asp-for="MonyDonate" aria-label="Amount (to the nearest dollar)">
+                            <InputNumber class="form-control" id="inlineFormInputGroup" placeholder="Donate" @bind-Value="_viewModel.MonyDonate" />
                             <div class="input-group-append">
                                 <div class="input-group-text">.00</div>
                             </div>
                         </div>
-                        <span asp-validation-for="MonyDonate" class="text-danger"></span>
                     </div>
-
-                    <div>
-                        <input class="btn" type="submit" value="Donate" />
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary mb-2">Donate</button>
                     </div>
-
-
-                </form>
-                <br />
-                <a class="btn btn-primary" onclick="RedirectToCompany(@Model.Id)" value="Donate">Back</a>
-            </div>
+                </div>
+                
+            </EditForm>
+            <br />
         </div>
         <br>
         <h3 class="text-center">Yandex</h3>
@@ -53,8 +49,8 @@
         <br>
         <h3 class="text-center">Scripe</h3>
         <br>
-
-        <form asp-action="Charge" asp-controller="Company" method="post" id="payment-form">
+        <EditForm Model="_viewModel2" OnValidSubmit="HandleValidSubmit2">
+            <DataAnnotationsValidator />
             <div class="">
                 <label for="card-element">
                     Credit or debit card
@@ -67,17 +63,12 @@
                 <div id="card-errors" role="alert"></div>
             </div>
             <br>
-            <input class="token" asp-for="Token" type="text" hidden disabled />
-            <div class="form-group">
-                <input asp-for="CompanyId" value="@Model.Id" hidden />
-            </div>
             <label class="label label-default">Money:</label>
-            <input asp-for="Total" />
-            <input class="input-group-text d-inline-block" asp-for="Email" type="email" value="@user.UserName" disabled />
-
+            <InputNumber aria-label="Amount (to the nearest dollar)" @bind-Value="_viewModel2.Total" />
+            <input class="input-group-text d-inline-block" asp-for="Email" type="email" value="@User.UserName" disabled />
             <button type="submit" class="btn btn-danger">Submit Payment</button>
-            <div asp-validation-summary="All" class="text-danger"></div>
-        </form>
+            <ValidationMessage For="@(() => _viewModel2.Total)" />
+        </EditForm>
     }
     else
     {
@@ -88,26 +79,15 @@
 
 @code {
     [Parameter]
-    public int CompanyId { get; set; }
-
     public Company Model { get; set; }
-    public User user { get; set; }
+    [Parameter]
+    public User User { get; set; }
+    public DonateViewModel _viewModel = new DonateViewModel();
+    public DonateViewModel2 _viewModel2 = new DonateViewModel2();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var claimUser = authState.User;
-        user = await _userManager.GetUserAsync(claimUser);
-        if (CompanyId != 0)
-        {
-            Model = await _db.Companies.Include(c => c.CompanyImages).FirstOrDefaultAsync(c => c.Id == CompanyId);
-        }
-    }
-
-    public void Dispose()
-    {
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -121,8 +101,34 @@
             catch (JSException)
             {
             }
-            
+
         }
     }
 
+    private async Task HandleValidSubmit()
+    {
+        Model.CurrentMoney += _viewModel.MonyDonate;
+        Donation donation = new Donation { CompanyId = Model.Id, UserId = User.Id, MonyDonate = _viewModel.MonyDonate };
+        await _db.Donations.AddAsync(donation);
+        await _db.SaveChangesAsync();
+    }
+
+    private async Task HandleValidSubmit2()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    public class DonateViewModel
+    {
+        [Required]
+        [Range(10, 100000, ErrorMessage = "10-100000 $")]
+        public int MonyDonate { get; set; }
+    }
+
+    public class DonateViewModel2
+    {
+        [Required]
+        [Range(10, 100000, ErrorMessage = "10-100000 $")]
+        public int Total { get; set; }
+    }
 }

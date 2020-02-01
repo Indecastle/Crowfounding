@@ -33,3 +33,40 @@
         filter: alpha(opacity=90);
         opacity: 0.9;
     }
+
+
+.grid-div-image {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.grid-image {
+    max-width: 150px;
+    max-height: 150px;
+}
+
+.my-grid {
+    padding: 15px !important;
+}
+
+
+.carousel-image {
+    max-width: 500px;
+    height: 300px;
+    margin: 0 auto;
+    display: block;
+}
+
+
+#ratingview .container {
+    background-color: #e0e0e0;
+    border-color: #6e00ff;
+    border-radius: 30px;
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+}

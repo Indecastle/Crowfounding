@@ -9,10 +9,7 @@
 {
 
     <div class="row">
-        <div class="col-md-12 text-center">
-            <h2>Company @Model.Name</h2>
-        </div>
-        @if (Model.UserID == user.Id && Model.IsEnd)
+        @if (Model.UserID == User.Id && Model.IsEnd)
         {
             <div class="col-md-offset-10">
                 <a class="btn btn-danger" onclick="RedirectTake(@Model.Id)">Take money and end company</a>
@@ -57,13 +54,13 @@
                     {
                         count++;
                         <div class="carousel-item active" style="transition: transform .6s ease-in-out,-webkit-transform .6s ease-in-out;">
-                            <img src="@image.PhotoPath" class="" style='width:260px; height:300px; margin: 0 auto; display: block;' />
+                            <img src="@image.PhotoPath" class="carousel-image" />
                         </div>
                     }
                     else
                     {
                         <div class="carousel-item " style="transition: transform .6s ease-in-out,-webkit-transform .6s ease-in-out;">
-                            <img src="@image.PhotoPath" class="" style='width:260px; height:300px; margin: 0 auto; display: block;' />
+                            <img src="@image.PhotoPath" class="carousel-image" />
                         </div>
                     }
                 }
@@ -77,7 +74,7 @@
                 </a>
             </div>
         </div>
-    }
+    } 
     else
     {
         <h3 class="text-center">No Photos in Company</h3>
@@ -101,27 +98,14 @@
 
 @code {
     [Parameter]
-    public int CompanyId { get; set; }
-
     public Company Model { get; set; }
-    public User user { get; set; }
+    [Parameter]
+    public User User { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var claimUser = authState.User;
-        user = await _userManager.GetUserAsync(claimUser);
-
-        if (CompanyId != 0)
-        {
-            Model = await _db.Companies.Include(c => c.CompanyImages).FirstOrDefaultAsync(c => c.Id == CompanyId);
-        }
-    }
-
-    public void Dispose()
-    {
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
