@@ -43,12 +43,6 @@ namespace Crowfounding.Data
                 .HasForeignKey(d => d.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<WebBrowser>()
-                .HasOne(a => a.Owner)
-                .WithMany(d => d.WebBrowsers)
-                .HasForeignKey(d => d.UserID)
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.Entity<Rating>()
                 .HasOne(a => a.Ranker)
                 .WithMany(d => d.Ratings)
@@ -61,7 +55,6 @@ namespace Crowfounding.Data
         public DbSet<Donation> Donations { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ImagesCompany> CompanyImages { get; set; }
-        public DbSet<WebBrowser> WebBrowsers { get; set; }
         public DbSet<Rating> Ratings { get; set; }
     }
 }

@@ -1,10 +1,82 @@
-﻿<h3>CompanyViewRating</h3>
+﻿@using System.ComponentModel.DataAnnotations
+@inject ApplicationDbContext _db;
+
+
+@if (Rating?.CompanyRating > 0)
+{
+    <h3>Youre rating is @Rating.CompanyRating: @Rating.When</h3>
+}
+else
+{
+    <h3>Please enter rating</h3>
+    <EditForm Model="_viewModel" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        @for (int i = 1; i <= 5; i++)
+        {
+            <div class="form-check">
+                <InputRadio class="form-check-input" name="exampleRadios" id='@($"exampleRadios{i}")' SelectedValue="i" @bind-Value="_viewModel.Rating" />
+                <label class="form-check-label" for='@($"exampleRadios{i}")'>@i</label>
+            </div>
+        }
+
+        <button type="submit">Submit</button>
+    </EditForm>
+
+}
+<br>
+<div id="ratingview">
+    @foreach (var rating in RatingsInViewModel)
+    {
+        <div class="container">
+            <p class="text-left">@rating.UserName</p>
+            <p class="text-left">@rating.CompanyRating</p>
+            <span class="text-left">@rating.When.ToString()</span>
+        </div>
+    }
+</div>
 
 @code {
     [Parameter]
-    public Company Model { get; set; }
+    public Company Company { get; set; }
     [Parameter]
     public User User { get; set; }
-    
-    
+    public RatingViewModel _viewModel = new RatingViewModel();
+
+    public Rating Rating { get; set; }
+    public List<Rating> RatingsInViewModel { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Rating = _db.Ratings.FirstOrDefault(o => o.UserId == User.Id && o.CompanyId == Company.Id);
+        RatingsInViewModel = _db.Ratings.Where(c => c.CompanyId == Company.Id).ToList();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+        }
+
+    }
+
+
+    public void HandleValidSubmit()
+    {
+        Rating rating = new Rating { CompanyRating = _viewModel.Rating, Ranker = User, UserId = User.Id, CompanyId = Company.Id,
+                When = DateTime.Now, UserName = User.UserName };
+            _db.Ratings.Add(rating);
+            _db.SaveChanges();
+    }
+
+
+    public class RatingViewModel
+    {
+        [Range(1, 5)]
+        public int Rating { get; set; }
+    }
 }

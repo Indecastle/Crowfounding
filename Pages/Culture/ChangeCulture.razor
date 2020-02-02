@@ -1,22 +1,49 @@
 ﻿@page "/Settings"
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject UserManager<User> _userManager;
 @inject NavigationManager NavigationManager
+@inject IHttpContextAccessor _httpContext;
 @inject IStringLocalizer<ChangeCulture> L
 
 <h3>@L["Select_your_language"]</h3>
 
-<select @onchange="OnSelected">
+<select @onchange="OnSelected" value="@Lang">
     <option>Select Language...</option>
     <option value="en">English</option>
     <option value="ru">Russian</option>
 </select>
 
-<select @onchange="OnSelectedTheme">
+<select @onchange="OnSelectedTheme" value="@Theme">
     <option>Select Theme...</option>
     <option value="Original">Original</option>
     <option value="Black">Black</option>
 </select>
 
+<br />
+(@Lang)
+
 @code {
+    public string Theme;
+    public string Lang;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _httpContext.HttpContext.Request.Cookies.TryGetValue("Theme", out Theme);
+
+        var rqf = _httpContext.HttpContext.Features.Get<IRequestCultureFeature>();
+        Lang = rqf.RequestCulture.UICulture.Name;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+        }
+
+    }
+
     private void OnSelected(ChangeEventArgs e)
     {
         var culture = (string)e.Value;

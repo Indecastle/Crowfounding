@@ -22,7 +22,5 @@ namespace Crowfounding.Models
 
         public virtual ICollection<Rating> Ratings { get; set; }
 
-        public virtual ICollection<WebBrowser> WebBrowsers { get; set; }
-
     }
 }
