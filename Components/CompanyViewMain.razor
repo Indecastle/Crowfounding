@@ -2,39 +2,40 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider;
 @inject UserManager<User> _userManager;
 @inject NavigationManager NavigationManager
+@inject SingleCommentService _chatService;
 @inject IJSRuntime JsRuntime;
 @inject IStringLocalizer<CompanyViewMain> L
 
-@if (Model != null)
+@if (LocalCompany != null)
 {
 
     <div class="row">
-        @if (Model.UserID == User.Id && Model.IsEnd)
+        @if (LocalCompany.UserID == User?.Id && LocalCompany.IsEnd)
         {
             <div class="col-md-offset-10">
-                <a class="btn btn-danger" onclick="RedirectTake(@Model.Id)">Take money and end company</a>
+                <a class="btn btn-danger" onclick="RedirectTake(@LocalCompany.Id)">Take money and end company</a>
             </div>
         }
-        <div class="col-md-12 text-center"><h3>Theme of Company: @Model.Theme</h3></div>
+        <div class="col-md-12 text-center"><h3>Theme of Company: @LocalCompany.Theme</h3></div>
     </div>
 
     <div class="row">
-        <div class="col-md-8"><h4>Rating Comapany: @Model.Rating </h4></div>
-        <div class="col-md-8"><h5>Money @Model.CurrentMoney / @Model.NeedMoney</h5></div>
+        <div class="col-md-8"><h4>Rating Comapany: @LocalCompany.Rating </h4></div>
+        <div class="col-md-8"><h5>Money @LocalCompany.CurrentMoney / @LocalCompany.NeedMoney</h5></div>
 
     </div>
-    @if (Model.EndAtNextDay == true)
+    @if (LocalCompany.EndAtNextDay == true)
     {
         <h4 class="text-center text-danger"> Enformation! Company will be end tomorrow! </h4>
     }
     <hr />
     <h3 class="text-center">Photos</h3>
-    @if (Model.CompanyImages.Count > 0)
+    @if (LocalCompany.CompanyImages.Count > 0)
     {
         int count = 0;
         <div id="myCarousel" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
-                @for (int i = 0; i < Model.CompanyImages.Count; i++)
+                @for (int i = 0; i < LocalCompany.CompanyImages.Count; i++)
                 {
                     if (i == 0)
                     {
@@ -48,7 +49,7 @@
             </ol>
             <div class="carousel-inner">
 
-                @foreach (var image in Model.CompanyImages)
+                @foreach (var image in LocalCompany.CompanyImages)
                 {
                     if (count == 0)
                     {
@@ -74,7 +75,7 @@
                 </a>
             </div>
         </div>
-    } 
+    }
     else
     {
         <h3 class="text-center">No Photos in Company</h3>
@@ -92,13 +93,13 @@
 
     <h3 class="text-center">Description</h3>
     <div>
-        @MarkDownParser.Parse(Model.Description)
+        @MarkDownParser.Parse(LocalCompany.Description)
     </div>
 }
 
 @code {
     [Parameter]
-    public Company Model { get; set; }
+    public Company LocalCompany { get; set; }
     [Parameter]
     public User User { get; set; }
 
@@ -110,11 +111,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-
-        }
-
+        if (firstRender) {}
     }
 
     public void RedirectToCompany(Company company)
@@ -126,12 +123,12 @@
     {
         try
         {
-            Uri myUri = new Uri(Model.URLVideo);
+            Uri myUri = new Uri(LocalCompany.URLVideo);
             return HttpUtility.ParseQueryString(myUri.Query).Get("v");
         }
         catch (UriFormatException)
         {
-            return HttpUtility.ParseQueryString(Model.URLVideo).Get("v");
+            return HttpUtility.ParseQueryString(LocalCompany.URLVideo).Get("v");
         }
 
 

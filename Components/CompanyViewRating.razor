@@ -1,30 +1,34 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @inject ApplicationDbContext _db;
+@inject SingleCommentService _chatService;
+@implements IDisposable
 
-
-@if (Rating?.CompanyRating > 0)
+@if (User != null)
 {
-    <h3>Youre rating is @Rating.CompanyRating: @Rating.When</h3>
+    @if (Rating?.CompanyRating > 0)
+    {
+        <h3>Youre rating is @Rating.CompanyRating: @Rating.When</h3>
+    }
+    else
+    {
+        <h3>Please enter rating</h3>
+        <EditForm Model="_viewModel" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            @for (int i = 1; i <= 5; i++)
+            {
+                <div class="form-check">
+                    <InputRadio class="form-check-input" name="exampleRadios" id='@($"exampleRadios{i}")' SelectedValue="i" @bind-Value="_viewModel.Rating" />
+                    <label class="form-check-label" for='@($"exampleRadios{i}")'>@i</label>
+                </div>
+            }
+            <button type="submit">Submit</button>
+        </EditForm>
+
+    }
 }
-else
-{
-    <h3>Please enter rating</h3>
-    <EditForm Model="_viewModel" OnValidSubmit="HandleValidSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
 
-        @for (int i = 1; i <= 5; i++)
-        {
-            <div class="form-check">
-                <InputRadio class="form-check-input" name="exampleRadios" id='@($"exampleRadios{i}")' SelectedValue="i" @bind-Value="_viewModel.Rating" />
-                <label class="form-check-label" for='@($"exampleRadios{i}")'>@i</label>
-            </div>
-        }
-
-        <button type="submit">Submit</button>
-    </EditForm>
-
-}
 <br>
 <div id="ratingview">
     @foreach (var rating in RatingsInViewModel)
@@ -39,7 +43,8 @@ else
 
 @code {
     [Parameter]
-    public Company Company { get; set; }
+    public Company LocalCompany { get; set; }
+    public Company TotalCompany { get; set; }
     [Parameter]
     public User User { get; set; }
     public RatingViewModel _viewModel = new RatingViewModel();
@@ -51,8 +56,13 @@ else
     {
         await base.OnInitializedAsync();
 
-        Rating = _db.Ratings.FirstOrDefault(o => o.UserId == User.Id && o.CompanyId == Company.Id);
-        RatingsInViewModel = _db.Ratings.Where(c => c.CompanyId == Company.Id).ToList();
+        if (User != null)
+            Rating = _db.Ratings.FirstOrDefault(o => o.UserId == User.Id && o.CompanyId == LocalCompany.Id);
+        TotalCompany = _chatService.TotalCompany;
+        TotalCompany.UpdatedRating += UpdatedRating;
+        UpdatedRating();
+
+
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -64,18 +74,44 @@ else
 
     }
 
-
-    public void HandleValidSubmit()
+    public void Dispose()
     {
-        Rating rating = new Rating { CompanyRating = _viewModel.Rating, Ranker = User, UserId = User.Id, CompanyId = Company.Id,
-                When = DateTime.Now, UserName = User.UserName };
-            _db.Ratings.Add(rating);
-            _db.SaveChanges();
+        if (TotalCompany != null)
+        {
+            TotalCompany.UpdatedRating -= UpdatedRating;
+        }
+    }
+
+
+    public async void UpdatedRating()
+    {
+        RatingsInViewModel = _db.Ratings.Where(c => c.CompanyId == LocalCompany.Id).Take(20).ToList();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task HandleValidSubmit()
+    {
+        Rating = new Rating
+        {
+            CompanyRating = _viewModel.Rating,
+            Ranker = User,
+            UserId = User.Id,
+            CompanyId = LocalCompany.Id,
+            When = DateTime.Now,
+            UserName = User.UserName
+        };
+        _db.Ratings.Add(Rating);
+        //Company tempCompany = await _db.Companies.FirstOrDefaultAsync(c => c.Id == Company.Id);
+        await _db.Entry(LocalCompany).ReloadAsync();
+        CompanyBusinessLogic.UpdateRatingCompany(LocalCompany, Rating);
+        _db.SaveChanges();
+        TotalCompany.UpdateRating();
     }
 
 
     public class RatingViewModel
     {
+        [Required]
         [Range(1, 5)]
         public int Rating { get; set; }
     }

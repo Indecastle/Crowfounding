@@ -95,17 +95,13 @@
     {
         await base.OnInitializedAsync();
 
-        if (await _chatService.InitChat(LocalCompany, user))
-        {
-            TotalCompany = _chatService.TotalCompany;
-            TotalCompany.Sent += GotComment;
-            TotalCompany.Updated += UpdatedComments;
-            TotalCompany.ChangedComment += ChangedComment;
-            Comments = _chatService.LocalComments;
+        TotalCompany = _chatService.TotalCompany;
+        TotalCompany.Sent += GotComment;
+        TotalCompany.Updated += UpdatedComments;
+        TotalCompany.ChangedComment += ChangedComment;
 
-        }
-        else
-            NavigationManager.NavigateTo("/");
+        _chatService.InitChat();
+        Comments = _chatService.LocalComments;
     }
 
     public void Dispose()

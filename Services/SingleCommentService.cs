@@ -29,19 +29,19 @@ namespace Crowfounding.Services
             this._userManager = userManager;
         }
 
-        public async Task<bool> InitChat(Company company, User user)
+        public async Task<bool> InitService(Company company, User user)
         {
             this.user = user;
-            TotalCompany = GetActiveChat(company.Id);
-            if (TotalCompany != null)
-            {
-                LocalComments = Comment.CopyComments(TotalCompany.Comments);
-                return true;
-            }
-            return false;
+            TotalCompany = await GetActiveChat(company.Id);
+            return TotalCompany != null;
         }
 
-        public Company GetActiveChat(int companyId)
+        public void InitChat()
+        {
+            LocalComments = Comment.CopyComments(TotalCompany.Comments);
+        }
+
+        public async Task<Company> GetActiveChat(int companyId)
         {
             Company chat = _chatService.Companies.FirstOrDefault(c => c.Id == companyId);
             if (chat != null)
@@ -49,7 +49,7 @@ namespace Crowfounding.Services
             }
             else
             {
-                chat = _db.Companies.Include(g => g.Comments).FirstOrDefault(c => c.Id == companyId);
+                chat = await _db.Companies.Include(g => g.Comments).FirstOrDefaultAsync(c => c.Id == companyId);
                 if (chat != null)
                     _chatService.Companies.Add(chat);
             }

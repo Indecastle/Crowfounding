@@ -8,13 +8,13 @@
 <h3>@L["Select_your_language"]</h3>
 
 <select @onchange="OnSelected" value="@Lang">
-    <option>Select Language...</option>
+    <option disabled hidden>Select Language...</option>
     <option value="en">English</option>
     <option value="ru">Russian</option>
 </select>
 
 <select @onchange="OnSelectedTheme" value="@Theme">
-    <option>Select Theme...</option>
+    <option disabled hidden>Select Theme...</option>
     <option value="Original">Original</option>
     <option value="Black">Black</option>
 </select>

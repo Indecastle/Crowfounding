@@ -21,6 +21,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Globalization;
 using Crowfounding.Services;
 using Amazon.S3;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
+using Crowfounding.BackroundJob;
 
 namespace Crowfounding
 {
@@ -89,13 +92,15 @@ namespace Crowfounding
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<User>>();
             services.AddSingleton<WeatherForecastService>();
             services.AddScoped<ThemeService>();
+            services.AddHostedService<TimedHostedService>();
             services.AddHttpContextAccessor();
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
-            var supportedCultures = new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("ru") };
+            var supportedCultures = new List<CultureInfo> { new CultureInfo("ru"), new CultureInfo("en") };
             services.Configure<RequestLocalizationOptions>(options =>
             {
-                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en");
+                options.DefaultRequestCulture = new RequestCulture(new CultureInfo("ru"), new CultureInfo("ru"));
+                options.SupportedCultures = supportedCultures;
                 options.SupportedUICultures = supportedCultures;
             });
 
@@ -110,6 +115,7 @@ namespace Crowfounding
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IS3Service _is3)
         {
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -123,13 +129,14 @@ namespace Crowfounding
             }
 
             app.UseHttpsRedirection();
-            app.UseRequestLocalization();
+            
             app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseRequestLocalization();
 
             app.UseEndpoints(endpoints =>
             {

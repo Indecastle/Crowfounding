@@ -1,0 +1,96 @@
+﻿@page "/CompanyManage"
+@inject ApplicationDbContext _db;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject UserManager<User> _userManager;
+@inject NavigationManager NavigationManager
+<div class="container-fluid">
+    <div class="page-header">
+        <h2>Company Managment</h2>
+    </div>
+
+    <form method="post">
+        <NavLink class="btn btn-primary" href="CreateCompany">CreateCompany</NavLink>
+        <br>
+        <div class="form-actions">
+            <input class="form-control" type="text" name="SearchString" @oninput="FilterFunc" />
+            <input type="submit" value="Search" class="btn btn-default" />
+            <a class="btn btn-default" asp-action="Users" asp-controller="Admin">To List</a>
+        </div>
+    </form>
+
+    <hr />
+    @if (CompaniesFilter != null)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Theme</th>
+                        <th scope="col">End</th>
+                        <th scope="col">Current Mony</th>
+                        <th scope="col">NeedMoney</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var company in CompaniesFilter)
+                    {
+                        <tr @onclick="(e => RedirectToCompany(company.Id))">
+
+                            <td>@company.Name</td>
+                            <td>@company.Theme</td>
+                            <td>@company.End.ToShortDateString()</td>
+                            <td>@company.CurrentMoney</td>
+                            <td>@company.NeedMoney</td>
+                            <td @onclick:stopPropagation>
+                                <NavLink class="btn btn-sm btn-danger" href='@($"CreateCompany/edit/{company.Id}")'>Edit</NavLink>
+                                <a class="btn btn-sm btn-danger" target="_top" href='@($"DeleteCompany{GetUri(company.Id)}")'>Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public User User { get; set; }
+    [Parameter]
+    public List<Company> Companies { get; set; }
+    public List<Company> CompaniesFilter { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var claimUser = authState.User;
+        User = await _userManager.GetUserAsync(claimUser);
+
+        Companies = _db.Companies.ToList();
+        CompaniesFilter = Companies;
+    }
+
+    public async Task FilterFunc(ChangeEventArgs e)
+    {
+        string str = e.Value.ToString();
+        CompaniesFilter = string.IsNullOrWhiteSpace(str) ? Companies : Companies.Where(c => c.Name.ToLower().Contains(str.ToLower())).ToList();
+    }
+
+    public void RedirectToCompany(int companyId)
+    {
+        NavigationManager.NavigateTo($"/CompanyView/{companyId}");
+    }
+
+    public string GetUri(int companyId)
+    {
+        var uri = new Uri(NavigationManager.Uri)
+            .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+        var query = $"?companyId={companyId}&" +
+            $"redirectUri={Uri.EscapeDataString(uri)}";
+        return query;
+    }
+}

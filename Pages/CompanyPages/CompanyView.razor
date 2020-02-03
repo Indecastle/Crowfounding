@@ -6,54 +6,62 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime;
 @inject IStringLocalizer<CompanyView> L
+@inject SingleCommentService _chatService;
+@implements IDisposable
 
+<div class="container">
+    @if (LocalCompany != null)
+    {
 
-    <div class="container">
-        @if (Model != null)
-        {
-
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <h2>Company @Model.Name</h2>
-                </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h2>Company @LocalCompany.Name</h2>
             </div>
-        }
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a class="nav-link @CheckActivePartial(1)" @onclick="(e => ActivePartial = 1)">Main</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link @CheckActivePartial(2)" @onclick="(e => ActivePartial = 2)">Comments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link @CheckActivePartial(3)" @onclick="(e => ActivePartial = 3)">Donate</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link @CheckActivePartial(4)" @onclick="(e => ActivePartial = 4)">Rating</a>
-                </li>
-            </ul>
-
-
-            @switch (ActivePartial)
-            {
-                case 1:<CompanyViewMain Model="Model" User="User" />
-                    break;
-                case 2: <CompanyViewComments LocalCompany="Model" user="User" />
-                    break;
-                case 3: <CompanyViewDonate Model="Model" User="User" />
-                    break;
-                case 4: <CompanyViewRating Company="Model" User="User" />
-                    break;
-            }
         </div>
+    }
+    <ul class="nav nav-tabs" style="margin-bottom: 10px;">
+        <li class="nav-item">
+            <a class="nav-link @CheckActivePartial(1)" @onclick="(e => ActivePartial = 1)">Main</a>
+        </li>
+        @if (User != null)
+        {
+            <li class="nav-item">
+                <a class="nav-link @CheckActivePartial(2)" @onclick="(e => ActivePartial = 2)">Comments</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @CheckActivePartial(3)" @onclick="(e => ActivePartial = 3)">Donate</a>
+            </li>
+        }
+        <li class="nav-item">
+            <a class="nav-link @CheckActivePartial(4)" @onclick="(e => ActivePartial = 4)">Rating</a>
+        </li>
+    </ul>
+
+
+    @switch (ActivePartial)
+    {
+        case 1:<CompanyViewMain LocalCompany="LocalCompany" User="User" />
+            break;
+        case 2: <CompanyViewComments LocalCompany="LocalCompany" user="User" />
+            break;
+        case 3: <CompanyViewDonate Model="LocalCompany" User="User" />
+            break;
+        case 4: <CompanyViewRating LocalCompany="LocalCompany" User="User" />
+            break;
+    }
+</div>
 
 
 
 @code {
+    private int ActivePartial { get; set; } = 1;
+
     [Parameter]
     public int CompanyId { get; set; }
     [Parameter]
-    public Company Model { get; set; }
+    public Company LocalCompany { get; set; }
+    [Parameter]
+    public Company TotalCompany { get; set; }
     [Parameter]
     public User User { get; set; }
 
@@ -65,12 +73,32 @@
         var claimUser = authState.User;
         User = await _userManager.GetUserAsync(claimUser);
 
-        Model = await _db.Companies.Include(c => c.CompanyImages).FirstOrDefaultAsync(c => c.Id == CompanyId);
-        if(Model == null)
+        LocalCompany = await _db.Companies.Include(c => c.CompanyImages).FirstOrDefaultAsync(c => c.Id == CompanyId);
+        if (LocalCompany != null && await _chatService.InitService(LocalCompany, User))
+        {
+            TotalCompany = _chatService.TotalCompany;
+            TotalCompany.UpdatedRating += UpdatedRating;
+        }
+        else
             NavigationManager.NavigateTo("");
     }
 
-    private int ActivePartial { get; set; } = 1;
+    public void Dispose()
+    {
+        if (TotalCompany != null)
+        {
+            TotalCompany.UpdatedRating -= UpdatedRating;
+        }
+    }
+
+
+    public async void UpdatedRating()
+    {
+        _db.Entry(LocalCompany).Reload();
+        _db.SaveChanges();
+        await InvokeAsync(StateHasChanged);
+    }
+
     private string CheckActivePartial(int partial)
     {
         return partial == ActivePartial ? "active disabled" : "";

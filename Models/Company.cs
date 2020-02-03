@@ -55,6 +55,7 @@ namespace Crowfounding.Models
         public event Action<Comment> Sent;
         public event Action<List<Comment>> Updated;
         public event Action<string, Comment> ChangedComment;
+        public event Action UpdatedRating;
 
         public void SendMessage(Comment comment)
         {
@@ -69,6 +70,11 @@ namespace Crowfounding.Models
         public void ChangeComment(string textComment, Comment editingComment)
         {
             ChangedComment.Invoke(textComment, editingComment);
+        }
+
+        public void UpdateRating()
+        {
+            UpdatedRating?.Invoke();
         }
 
         static public void RemoveMessages(List<Comment> comments, List<Comment> removedComments)

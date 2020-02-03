@@ -13,7 +13,7 @@ namespace Crowfounding.Data
 {
     public static class ChatHelper
     {
-        static readonly string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".svg", ".ico" };
+        static readonly string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".svg", ".ico", ".bmp" };
 
         public static MarkupString Parse(string markdown)
         {

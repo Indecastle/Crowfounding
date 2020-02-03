@@ -1,4 +1,5 @@
 ﻿@page "/CreateCompany"
+@page "/CreateCompany/Edit/{CompanyId:int}"
 @using BlazorInputFile;
 @inject IS3Service _is3;
 @inject ApplicationDbContext _db;
@@ -81,8 +82,13 @@
 
 
 @code {
+    [Parameter]
+    public int? CompanyId { get; set; } = null;
+    public bool isEditing;
+
     private CompanyViewModel _viewModel = new CompanyViewModel { Theme = Theme.Education };
     private EditContext _editContext;
+    private Company EditCompany;
     private IFileListEntry MainImage { get; set; }
     private IFileListEntry[] Images { get; set; }
 
@@ -90,22 +96,51 @@
     {
         await base.OnInitializedAsync();
 
+        if(CompanyId != null)
+            EditCompany = _db.Companies.FirstOrDefault(c => c.Id == CompanyId);
+
+        if (EditCompany != null)
+        {
+            isEditing = true;
+            _viewModel.Name = EditCompany.Name;
+            _viewModel.NeedMoney = EditCompany.NeedMoney;
+            _viewModel.Theme = EditCompany.Theme;
+            _viewModel.URLVideo = EditCompany.URLVideo;
+            _viewModel.Description = EditCompany.Description;
+            _viewModel.End = EditCompany.End;
+            _viewModel.MainImage = EditCompany.MainImage;
+            _viewModel.isLoadedMainImage = true;
+        }
+
         _editContext = new EditContext(_viewModel);
     }
 
     private async Task HandleValidSubmit()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var claimUser = authState.User;
-        var owner = await _userManager.GetUserAsync(claimUser);
-        Company company = new Company { Name = _viewModel.Name, Theme = _viewModel.Theme, End = _viewModel.End, NumberUsers = 0,
-            Rating = 0, Description = _viewModel.Description, CurrentMoney = 0, NeedMoney = _viewModel.NeedMoney, URLVideo = _viewModel.URLVideo,
-            DataCreate = DateTime.Now, LastEdit = DateTime.MinValue, EndAtNextDay = false, IsEnd = false, UserID = owner.Id, MainImage = _viewModel.MainImage};
-        if (_viewModel.Images != null)
+        if (isEditing)
         {
-            company.CompanyImages = _viewModel.Images.Select(imgUrl => new ImagesCompany { PhotoPath = imgUrl }).ToList();
+            EditCompany.Name = _viewModel.Name;
+            EditCompany.NeedMoney = _viewModel.NeedMoney;
+            EditCompany.Theme = _viewModel.Theme;
+            EditCompany.URLVideo = _viewModel.URLVideo;
+            EditCompany.Description = _viewModel.Description;
+            EditCompany.End = _viewModel.End;
+            EditCompany.MainImage = _viewModel.MainImage;
         }
-        await _db.Companies.AddAsync(company);
+        else
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var claimUser = authState.User;
+            var owner = await _userManager.GetUserAsync(claimUser);
+            Company company = new Company { Name = _viewModel.Name, Theme = _viewModel.Theme, End = _viewModel.End, NumberUsers = 0,
+                Rating = 0, Description = _viewModel.Description, CurrentMoney = 0, NeedMoney = _viewModel.NeedMoney, URLVideo = _viewModel.URLVideo,
+                DataCreate = DateTime.Now, LastEdit = DateTime.MinValue, EndAtNextDay = false, IsEnd = false, UserID = owner.Id, MainImage = _viewModel.MainImage};
+            if (_viewModel.Images != null)
+            {
+                company.CompanyImages = _viewModel.Images.Select(imgUrl => new ImagesCompany { PhotoPath = imgUrl }).ToList();
+            }
+            await _db.Companies.AddAsync(company);
+        }
         await _db.SaveChangesAsync();
         Console.WriteLine("OnValidSubmit @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         NavigationManager.NavigateTo("/");
