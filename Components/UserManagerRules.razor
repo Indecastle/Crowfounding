@@ -1,0 +1,27 @@
+﻿@inject ApplicationDbContext _db;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject UserManager<User> _userManager;
+@inject NavigationManager NavigationManager
+@inject SingleCommentService _chatService;
+@inject IJSRuntime JsRuntime;
+@inject IStringLocalizer<UserManagerRules> L
+
+<h1>Rules</h1>
+<h3>@User.Name</h3>
+<h3>@User.UserName</h3>
+
+@code {
+    [Parameter]
+    public User User { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) { }
+    }
+}
