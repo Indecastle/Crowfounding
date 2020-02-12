@@ -73,20 +73,21 @@ namespace Crowfounding.Services
                 CompanyId = TotalCompany.Id,
                 When = DateTime.Now
             };
-
+            
             TotalCompany.Comments.Add(message);
             _db.Comments.Add(message);
             _db.SaveChanges();
 
-            CutOutComments();
+            //CutOutComments();
 
             TotalCompany.SendMessage(message);
         }
 
         public void GotComment(Comment newMessage)
         {
-            Comment copyNewMessage = new Comment(newMessage);
-            LocalComments.Add(copyNewMessage);
+            if (user.Id != newMessage.UserID)
+                newMessage = new Comment(newMessage);
+            LocalComments.Add(newMessage);
             if (LocalComments.Count > Company.limitMessage)
             {
                 LocalComments.RemoveRange(0, LocalComments.Count - Company.limitMessage);
@@ -96,7 +97,6 @@ namespace Crowfounding.Services
         public void RemoveSelectedComments()
         {
             List<Comment> removeMessages = LocalComments.Where(m => m.Selecting).ToList();
-
             removeMessages.ForEach(m => _db.Entry(m).State = EntityState.Deleted);
             _db.SaveChanges();
             Company.RemoveMessages(TotalCompany.Comments, removeMessages);
@@ -143,7 +143,7 @@ namespace Crowfounding.Services
             _db.Comments.Add(message);
             _db.SaveChanges();
 
-            CutOutComments();
+            //CutOutComments();
 
             TotalCompany.SendMessage(message);
         }

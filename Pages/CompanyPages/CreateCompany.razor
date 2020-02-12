@@ -109,6 +109,7 @@
             _viewModel.Description = EditCompany.Description;
             _viewModel.End = EditCompany.End;
             _viewModel.MainImage = EditCompany.MainImage;
+            _viewModel.Images = EditCompany.CompanyImages.Select(ci => ci.PhotoPath).ToList();
             _viewModel.isLoadedMainImage = true;
         }
 
@@ -126,6 +127,7 @@
             EditCompany.Description = _viewModel.Description;
             EditCompany.End = _viewModel.End;
             EditCompany.MainImage = _viewModel.MainImage;
+            EditCompany.CompanyImages = _viewModel.Images.Select(imgUrl => new ImagesCompany { PhotoPath = imgUrl }).ToList();
         }
         else
         {

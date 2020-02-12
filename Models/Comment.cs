@@ -11,7 +11,6 @@ namespace Crowfounding.Models
     {
         public int Id { get; set; }
         [Required]
-        
         public string Text { get; set; }
         public DateTime When { get; set; }
         [Required]
@@ -33,6 +32,7 @@ namespace Crowfounding.Models
         public Comment(Comment comment)
         {
             this.Id = comment.Id;
+            this.UserID = comment.UserID;
             this.UserName = comment.UserName;
             this.Text = comment.Text;
             this.When = comment.When;

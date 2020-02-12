@@ -135,4 +135,7 @@
   <data name="Settings" xml:space="preserve">
     <value>Настройки</value>
   </data>
+  <data name="UserManager" xml:space="preserve">
+    <value>Менеджер пользователей</value>
+  </data>
 </root>

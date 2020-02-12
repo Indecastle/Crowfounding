@@ -15,7 +15,8 @@ namespace Crowfounding.Data
         public string MailServer { get; set; }
         public int MailPort { get; set; }
         public string SenderName { get; set; }
-        public string Sender { get; set; }
+        public string SenderEmail { get; set; }
+        public string SenderPassword { get; set; }
         public string Password { get; set; }
     }
 
@@ -39,7 +40,7 @@ namespace Crowfounding.Data
             {
                 var mimeMessage = new MimeMessage();
 
-                mimeMessage.From.Add(new MailboxAddress(_emailSettings.SenderName, _emailSettings.Sender));
+                mimeMessage.From.Add(new MailboxAddress(_emailSettings.SenderName, _emailSettings.SenderEmail));
                 mimeMessage.To.Add(new MailboxAddress(email));
                 mimeMessage.Subject = subject;
                 mimeMessage.Body = new TextPart("html")
@@ -63,7 +64,7 @@ namespace Crowfounding.Data
                         await client.ConnectAsync(_emailSettings.MailServer);
                     }
                     // Note: only needed if the SMTP server requires authentication
-                    await client.AuthenticateAsync(_emailSettings.Sender, _emailSettings.Password);
+                    await client.AuthenticateAsync(_emailSettings.SenderEmail, _emailSettings.SenderPassword);
                     await client.SendAsync(mimeMessage);
 
                     await client.DisconnectAsync(true);

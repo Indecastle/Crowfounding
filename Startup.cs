@@ -99,10 +99,17 @@ namespace Crowfounding
             var supportedCultures = new List<CultureInfo> { new CultureInfo("ru"), new CultureInfo("en") };
             services.Configure<RequestLocalizationOptions>(options =>
             {
-                options.DefaultRequestCulture = new RequestCulture(new CultureInfo("ru"), new CultureInfo("ru"));
+                options.DefaultRequestCulture = new RequestCulture(new CultureInfo("en"), new CultureInfo("en"));
                 options.SupportedCultures = supportedCultures;
                 options.SupportedUICultures = supportedCultures;
             });
+            var cultureInfo = new CultureInfo("en-US");
+            cultureInfo.NumberFormat.CurrencySymbol = "ˆ";
+
+            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+            CultureInfo.CurrentCulture = cultureInfo;
+            CultureInfo.CurrentUICulture = cultureInfo;
 
             services.AddSingleton<IS3Service, S3Service>();
             services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
@@ -113,7 +120,8 @@ namespace Crowfounding
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IS3Service _is3)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IS3Service _is3,
+            ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager, IOptions<EmailSettings> emailSettings)
         {
             
             if (env.IsDevelopment())
@@ -144,6 +152,8 @@ namespace Crowfounding
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+
+            DefaultDataDatabase.Initialize(context, userManager, roleManager, emailSettings).Wait();
         }
     }
 }

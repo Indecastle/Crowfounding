@@ -80,12 +80,20 @@ namespace Crowfounding.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+                if (user != null)
+                {
+                    if (user.IsBlocked)
+                    {
+                        _logger.LogWarning("User account locked out.");
+                        return RedirectToPage("./Lockout");
+                    }
+                }
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    User user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
                     HttpContext.Response.Cookies.Append("Theme", user.Theme.ToString());
                     HttpContext.Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, 
                         CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(user.Language.ToString())));

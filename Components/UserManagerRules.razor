@@ -5,23 +5,79 @@
 @inject SingleCommentService _chatService;
 @inject IJSRuntime JsRuntime;
 @inject IStringLocalizer<UserManagerRules> L
+@inject RoleManager<IdentityRole> _roleManager
+@inject UserManager<User> _userManager
 
 <h1>Rules</h1>
 <h3>@User.Name</h3>
 <h3>@User.UserName</h3>
 
+<div class="form-group">
+    @foreach (var role in allModRoles)
+    {
+        @if (role.role.Name != "SuperAdmin")
+        {
+            <input type="checkbox" name="roles" value="@role.role.Name" @bind="@role.IsSelect" />@role.role.Name <br />
+        }
+    }
+</div>
+<br />
+<button class="btn btn-dark" @onclick="Edit">Apply Roles</button>
+
+
 @code {
     [Parameter]
     public User User { get; set; }
 
+    public class ModRole
+    {
+        public IdentityRole role { get; set; }
+        public bool IsSelect { get; set; }
+        public ModRole(IdentityRole role)
+        {
+            this.role = role;
+        }
+    }
+
+    private List<IdentityRole> allRoles;
+    private List<ModRole> allModRoles = new List<ModRole>();
+    private IList<string> userRoles;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        userRoles = await _userManager.GetRolesAsync(User);
+        allRoles = _roleManager.Roles.ToList();
+        allModRoles = allRoles.Select(r => new ModRole(r)).ToList();
+        allModRoles.ForEach(mr => mr.IsSelect = userRoles.Contains(mr.role.Name));
+    }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender) { }
+    }
+
+    [Parameter]
+    public EventCallback OnClickCallback { get; set; }
+
+
+    public async Task Edit()
+    {
+        var roles = allModRoles.Where(mr => mr.IsSelect).Select(mr => mr.role.Name).ToList();
+        var addedRoles = roles.Except(userRoles);
+        var removedRoles = userRoles.Except(roles);
+        await _userManager.AddToRolesAsync(User, addedRoles);
+        await _userManager.RemoveFromRolesAsync(User, removedRoles);
+
+        await _db.SaveChangesAsync();
+        await OnClickCallback.InvokeAsync(new object());
     }
 }
