@@ -52,14 +52,14 @@ namespace Crowfounding.Models
 
 
 
-        public event Action<Comment> Sent;
+        public event Action<Comment, object> Sent;
         public event Action<List<Comment>> Updated;
         public event Action<string, Comment> ChangedComment;
         public event Action UpdatedRating;
 
-        public void SendMessage(Comment comment)
+        public void SendMessage(Comment comment, object sender)
         {
-            Sent?.Invoke(comment);
+            Sent?.Invoke(comment, sender);
         }
 
         public void UpdateChat(List<Comment> removeComments)

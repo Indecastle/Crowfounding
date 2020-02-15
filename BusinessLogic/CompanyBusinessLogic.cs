@@ -41,29 +41,6 @@ namespace Crowfounding.BusinessLogic
             return company;
         }
 
-        public static string UploadImageToServer(IFormFile image, string folderPath, bool many)
-        {
-            try
-            {
-                string folder = "images", uniqueFileName = null;
-                if (many)
-                    folder = "secondimages";
-
-                string[] splitpass = image.FileName.Split("\\");
-                string filename = splitpass[splitpass.Length - 1];
-
-                string uploadsFolder = Path.Combine(folderPath, folder);
-                uniqueFileName = Guid.NewGuid().ToString() + "_" + filename;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                image.CopyTo(new FileStream(filePath, FileMode.Create));
-                return uniqueFileName;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
         //public static string ChargeStripe(Company company, DonateViewModel donateViewModel)
         //{
         //    var customers = new CustomerService();

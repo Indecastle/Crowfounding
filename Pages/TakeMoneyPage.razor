@@ -1,0 +1,73 @@
+﻿@inject ApplicationDbContext _db;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject UserManager<User> _userManager;
+@inject NavigationManager NavigationManager
+@inject SingleCommentService _chatService;
+@inject IJSRuntime JsRuntime;
+@inject IStringLocalizer<TakeMoneyPage> L
+@attribute [Authorize]
+
+<h2 class="text-center">Take Money</h2>
+
+<h3>You collect @LocalCompany.CurrentMoney $</h3>
+<h3>Procent crowdfundinga is @prosent %</h3>
+<h3>You will take @money $</h3>
+<br>
+
+<button class="btn btn-default" @onclick="DeleteCompany">Take and Delete</button>
+
+
+
+@code {
+    [Parameter]
+    public Company LocalCompany { get; set; }
+    [Parameter]
+    public User User { get; set; }
+
+    public int prosent;
+    public double money;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        int? companyId = GetQueryParm("companyid");
+        if (companyId != null)
+        {
+            var claimUser = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User;
+            User = await _userManager.GetUserAsync(claimUser);
+            LocalCompany = await _db.Companies.FirstOrDefaultAsync(c => c.Id == companyId);
+            if (LocalCompany.IsEnd == false)
+                RedirectToHome();
+
+            money = LocalCompany.CurrentMoney * 0.9;
+            prosent = 10;
+        }
+        else
+            RedirectToHome();
+    }
+
+    private void RedirectToHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    public int? GetQueryParm(string parmName)
+    {
+        var uriBuilder = new UriBuilder(NavigationManager.Uri);
+        var q = HttpUtility.ParseQueryString(uriBuilder.Query);
+        if (Int32.TryParse(q[parmName], out int result))
+            return result;
+        else
+            return null;
+    }
+
+    public void DeleteCompany()
+    {
+        _db.Companies.Remove(LocalCompany);
+        _db.SaveChanges();
+        NavigationManager.NavigateTo("/");
+    }
+}

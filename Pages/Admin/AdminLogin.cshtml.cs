@@ -36,27 +36,5 @@ namespace Crowfounding
 
             return LocalRedirect(redirectUri);
         }
-        public async Task<IActionResult> OnGetBlockAsync(string userId, string redirectUri)
-        {
-            User user = await _userManager.FindByIdAsync(userId);
-            _logger.LogInformation("Use Admin login");
-            if (user != null)
-            {
-                await _signInManager.SignInAsync(user, false);
-            }
-
-            return LocalRedirect(redirectUri);
-        }
-        public async Task<IActionResult> OnGetUnblockAsync(string userId, string redirectUri)
-        {
-            User user = await _userManager.FindByIdAsync(userId);
-            _logger.LogInformation("Use Admin login");
-            if (user != null)
-            {
-                await _signInManager.SignInAsync(user, false);
-            }
-
-            return LocalRedirect(redirectUri);
-        }
     }
 }

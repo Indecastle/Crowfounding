@@ -80,18 +80,16 @@ namespace Crowfounding.Services
 
             //CutOutComments();
 
-            TotalCompany.SendMessage(message);
+            TotalCompany.SendMessage(message, this);
         }
 
-        public void GotComment(Comment newMessage)
+        public void GotComment(Comment newMessage, object sender)
         {
-            if (user.Id != newMessage.UserID)
+            if (this != sender)
                 newMessage = new Comment(newMessage);
             LocalComments.Add(newMessage);
             if (LocalComments.Count > Company.limitMessage)
-            {
                 LocalComments.RemoveRange(0, LocalComments.Count - Company.limitMessage);
-            }
         }
 
         public void RemoveSelectedComments()
@@ -145,7 +143,7 @@ namespace Crowfounding.Services
 
             //CutOutComments();
 
-            TotalCompany.SendMessage(message);
+            TotalCompany.SendMessage(message, this);
         }
 
         private void CutOutComments()

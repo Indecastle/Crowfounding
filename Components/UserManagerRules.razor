@@ -9,16 +9,10 @@
 @inject UserManager<User> _userManager
 
 <h1>Rules</h1>
-<h3>@User.Name</h3>
-<h3>@User.UserName</h3>
-
 <div class="form-group">
     @foreach (var role in allModRoles)
     {
-        @if (role.role.Name != "SuperAdmin")
-        {
-            <input type="checkbox" name="roles" value="@role.role.Name" @bind="@role.IsSelect" />@role.role.Name <br />
-        }
+        <input type="checkbox" name="roles" value="@role.role.Name" @bind="@role.IsSelect" />@role.role.Name <br />
     }
 </div>
 <br />
@@ -28,6 +22,8 @@
 @code {
     [Parameter]
     public User User { get; set; }
+    [Parameter]
+    public User TargetUser { get; set; }
 
     public class ModRole
     {
@@ -47,8 +43,17 @@
     {
         await base.OnParametersSetAsync();
 
-        userRoles = await _userManager.GetRolesAsync(User);
+        userRoles = await _userManager.GetRolesAsync(TargetUser);
+        
         allRoles = _roleManager.Roles.ToList();
+
+        IdentityRole roleSuperAdmin = allRoles.FirstOrDefault(ir => ir.Name == "SuperAdmin");
+        IdentityRole roleAdmin = allRoles.FirstOrDefault(ir => ir.Name == "Admin");
+        if (await _userManager.IsInRoleAsync(User, "SuperAdmin") == false)
+            allRoles.Remove(roleAdmin);
+        allRoles.Remove(roleSuperAdmin);
+        userRoles.Remove("SuperAdmin");
+
         allModRoles = allRoles.Select(r => new ModRole(r)).ToList();
         allModRoles.ForEach(mr => mr.IsSelect = userRoles.Contains(mr.role.Name));
     }
@@ -74,8 +79,8 @@
         var roles = allModRoles.Where(mr => mr.IsSelect).Select(mr => mr.role.Name).ToList();
         var addedRoles = roles.Except(userRoles);
         var removedRoles = userRoles.Except(roles);
-        await _userManager.AddToRolesAsync(User, addedRoles);
-        await _userManager.RemoveFromRolesAsync(User, removedRoles);
+        await _userManager.AddToRolesAsync(TargetUser, addedRoles);
+        await _userManager.RemoveFromRolesAsync(TargetUser, removedRoles);
 
         await _db.SaveChangesAsync();
         await OnClickCallback.InvokeAsync(new object());

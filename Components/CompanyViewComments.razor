@@ -124,9 +124,9 @@
 
 
 
-    public void GotComment(Comment newComment)
+    public void GotComment(Comment newComment, object sender)
     {
-        _chatService.GotComment(newComment);
+        _chatService.GotComment(newComment, sender);
         InvokeAsync(StateHasChanged);
     }
 

@@ -3,12 +3,13 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserManager<User> _userManager
 @inject NavigationManager NavigationManager
-@attribute [Authorize]
+@inject IJSRuntime JsRuntime;
+@attribute [Authorize(Roles = "Admin, SuperAdmin")]
 <h3>UsersManager</h3>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-8">
+        <div class="col-10">
             <div class="form-row align-items-center">
                 <div class="col-sm-3 my-1">
                     <label class="sr-only" for="inlineFormInputGroupUsername">Имя пользователя</label>
@@ -20,15 +21,10 @@
                     </div>
                 </div>
                 <div class="col-auto my-1">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="autoSizingCheck2">
-                        <label class="form-check-label" for="autoSizingCheck2">
-                            Remember me
-                        </label>
-                    </div>
+                    <button type="submit" class="btn btn-primary" @onclick="(e => BlockRange())">Block</button>
                 </div>
                 <div class="col-auto my-1">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary" @onclick="(e => BlockRange(false))">UnBlock</button>
                 </div>
             </div>
 
@@ -37,7 +33,7 @@
                 <table class="table table-striped results display table">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" id="select_all" title="All" @bind="AllSelectBox" @onclick="SelectAll"></th>
+                            <th><input type="checkbox" id="select_all" title="All" @bind="@AllSelectBox" @onclick="SelectAll"></th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Data Registration</th>
@@ -48,10 +44,10 @@
 
                     </thead>
                     <tbody>
-                        @foreach (var user in FilterEmployees)
+                        @foreach (var user in FilterModUsers)
                         {
                             <tr>
-                                <td> <input name="selectedUsers" class="checkbox" type="checkbox" @bind="user.IsSelect"> </td>
+                                <td> <input name="selectedUsers" class="checkbox" type="checkbox" @bind="user.IsSelect" @onclick="(e => SelectOne(user))"> </td>
                                 <td>@user.user.Name</td>
                                 <td>@user.user.Email</td>
                                 <td>@user.user.DateRegister</td>
@@ -67,8 +63,8 @@
                                     }
                                 </td>
                                 <td>
-                                    <a class="btn btn-sm btn-primary" @onclick="(e => ChangeRules(user))">Права доступа</a>
-                                    <a class="btn btn-sm btn-primary" @onclick="(e => Login(user))">Login</a>
+                                    <button class="btn btn-sm btn-primary" @onclick="(e => ChangeRules(user))">Права доступа</button>
+                                    <button class="btn btn-sm btn-primary" @onclick="(e => Login(user))">Login</button>
                                 </td>
                             </tr>
                         }
@@ -76,10 +72,10 @@
                 </table>
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-2">
             @if (ChangeRuleUser != null)
             {
-                <UserManagerRules User="ChangeRuleUser" OnClickCallback="OnHide"/>
+                <UserManagerRules User="user" TargetUser="ChangeRuleUser" OnClickCallback="OnHide" />
             }
         </div>
     </div>
@@ -91,19 +87,21 @@
 @code {
     public User ChangeRuleUser { get; set; }
 
-    List<Employee> Employees { get; set; } = new List<Employee>();
-    List<Employee> FilterEmployees { get; set; } = new List<Employee>();
+    List<ModUser> ModUsers { get; set; } = new List<ModUser>();
+    List<ModUser> FilterModUsers { get; set; } = new List<ModUser>();
     public User user { get; set; }
-    List<User> UsersAll { get; set; }
+    IEnumerable<User> UsersAll { get; set; }
     public string NameChat { get; set; }
     public string SearchText { get; set; }
-    public bool AllSelectBox;
+    [Parameter]
+    public bool AllSelectBox { get; set; }
 
-    public class Employee
+    public class ModUser
     {
         public User user { get; set; }
         public bool IsSelect { get; set; }
-        public Employee(User user)
+        public bool IsSuperAdmin { get; set; }
+        public ModUser(User user)
         {
             this.user = user;
         }
@@ -115,32 +113,43 @@
         var claimUser = authState.User;
         user = await _userManager.GetUserAsync(claimUser);
 
-        UsersAll = _db.Users.ToList();
-        Employees = UsersAll.Select(u => new Employee(u)).ToList();
-        FilterEmployees = Employees;
+        IList<User> superAdmins = await _userManager.GetUsersInRoleAsync("SuperAdmin");
+        if (await _userManager.IsInRoleAsync(user, "SuperAdmin") == false)
+            UsersAll = (await _db.Users.ToListAsync()).Except(superAdmins);
+        else
+            UsersAll = _db.Users.AsQueryable();
+
+        ModUsers = UsersAll.Select(u => new ModUser(u)).ToList();
+        FilterModUsers = ModUsers;
     }
 
 
-    public async Task FilterFunc(string searchText)
+    public void FilterFunc(string searchText)
     {
-        FilterEmployees = string.IsNullOrWhiteSpace(searchText) ? Employees : Employees.Where(c => c.user.Name.ToLower().Contains(searchText.ToLower())).ToList();
+        FilterModUsers = string.IsNullOrWhiteSpace(searchText) ? ModUsers : ModUsers.Where(c => c.user.Name.ToLower().Contains(searchText.ToLower())).ToList();
     }
 
     public void SelectAll(MouseEventArgs e)
     {
-        FilterEmployees.ForEach(emp => emp.IsSelect = !AllSelectBox);
+        FilterModUsers.ForEach(emp => emp.IsSelect = !AllSelectBox);
         StateHasChanged();
     }
 
-    public void ChangeRules(Employee user)
+    public void SelectOne(ModUser emp)
+    {
+        if (emp.IsSelect == true) // reverse
+            AllSelectBox = false;
+    }
+
+    public void ChangeRules(ModUser user)
     {
         ChangeRuleUser = ChangeRuleUser != user.user ? user.user : null;
         StateHasChanged();
     }
 
-    private void Login(Employee employee)
+    private void Login(ModUser modUser)
     {
-        var user = employee.user;
+        var user = modUser.user;
         var uri = new Uri(NavigationManager.Uri)
             .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
         var query = $"?userId={Uri.EscapeDataString(user.Id)}&" +
@@ -149,14 +158,14 @@
         NavigationManager.NavigateTo("/Admin/AdminLogin" + query, forceLoad: true);
     }
 
-    public async Task Block(Employee employee)
+    public async Task Block(ModUser modUser)
     {
-        var user = employee.user;
-        user.IsBlocked = !user.IsBlocked;
-        _db.SaveChanges();
-
-        UsersAll = _db.Users.ToList();
-        Employees = UsersAll.Select(u => new Employee(u)).ToList();
+        var user = modUser.user;
+        if (!(user.Id == this.user.Id && !user.IsBlocked))
+        {
+            user.IsBlocked = !user.IsBlocked;
+            _db.SaveChanges();
+        }
 
         FilterFunc(SearchText);
         StateHasChanged();
@@ -165,5 +174,17 @@
     public void OnHide()
     {
         ChangeRuleUser = null;
+    }
+
+    public void BlockRange(bool isBlocked = true)
+    {
+        List<ModUser> filterEmp = FilterModUsers.Where(emp => emp.IsSelect).ToList();
+        foreach (var user in filterEmp.Select(emp => emp.user))
+        {
+            if (!(user.Id == this.user.Id && !user.IsBlocked))
+                user.IsBlocked = isBlocked;
+        }
+        _db.SaveChanges();
+        StateHasChanged();
     }
 }

@@ -20,7 +20,7 @@ namespace Crowfounding.Data
             EmailSettings settings = emailSettings.Value;
 
             context.Database.EnsureCreated();
-            string[] roles = { "Admin", "Member", "SuperAdmin" };
+            string[] roles = { "Admin", "Member", "SuperAdmin", "Moderator" };
             foreach(var role in roles)
             {
                 if(await roleManager.FindByNameAsync(role) == null)
@@ -28,10 +28,10 @@ namespace Crowfounding.Data
                     await roleManager.CreateAsync(new IdentityRole(role));
                 }
             }
-
-            if(await userManager.FindByEmailAsync(settings.SenderEmail) == null)
+            User user = await userManager.FindByEmailAsync(settings.SenderEmail);
+            if (user == null)
             {
-                var user = new User
+                user = new User
                 {
                     UserName = settings.SenderEmail,
                     Email = settings.SenderEmail,
@@ -47,7 +47,10 @@ namespace Crowfounding.Data
                     await userManager.AddToRolesAsync(user, roles);
                 }
             }
-
+            else
+            {
+                await userManager.AddToRoleAsync(user, "SuperAdmin");
+            }
            
 
         }
