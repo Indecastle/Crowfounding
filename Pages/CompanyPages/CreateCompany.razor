@@ -10,76 +10,77 @@
 @attribute [Authorize]
 <h2>CreateCompany</h2>
 
-<EditForm EditContext="@_editContext" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<div class="container">
+    <EditForm EditContext="@_editContext" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <div>
-        <label for="Nameid">Name:</label>
+        <div>
+            <label for="Nameid">Name:</label>
 
-        <InputText @bind-Value="_viewModel.Name" id="Nameid" class="form-control" aria-describedby="name..." placeholder="name..." />
-        <ValidationMessage For="@(() => _viewModel.Name)" />
-    </div>
-    <div class="form-group">
-        <label for="selectid">Theme:</label>
-        <InputSelect @bind-Value="_viewModel.Theme" class="form-control" id="selectid">
-            <option value="@Theme.Education">Education</option>
-            <option value="@Theme.Electronics">Electronics</option>
-            <option value="@Theme.Food">Food</option>
-            <option value="@Theme.ITcompany">ITcompany</option>
-            <option value="@Theme.Service">Service</option>
-        </InputSelect>
-        <ValidationMessage For="@(() => _viewModel.Theme)" />
-    </div>
-    <div class="form-group shadow-textarea">
-        <label for="DescrId">Description:</label>
-        <InputTextArea class="form-control" rows="5" placeholder="Write Description with Markdown..." id="DescrId" @bind-Value="_viewModel.Description" />
-        <ValidationMessage For="@(() => _viewModel.Description)" />
-    </div>
-    <div class="form-group">
-        End:
-        <InputDate class="form-control" @bind-Value="_viewModel.End" />
-        <ValidationMessage For="@(() => _viewModel.End)" />
-    </div>
-    <div class="form-group">
-        <label for="NeedMoneyid">NeedMoney:</label>
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <div class="input-group-text">$</div>
+            <InputText @bind-Value="_viewModel.Name" id="Nameid" class="form-control" aria-describedby="name..." placeholder="name..." />
+            <ValidationMessage For="@(() => _viewModel.Name)" />
+        </div>
+        <div class="form-group">
+            <label for="selectid">Theme:</label>
+            <InputSelect @bind-Value="_viewModel.Theme" class="form-control" id="selectid">
+                <option value="@Theme.Education">Education</option>
+                <option value="@Theme.Electronics">Electronics</option>
+                <option value="@Theme.Food">Food</option>
+                <option value="@Theme.ITcompany">ITcompany</option>
+                <option value="@Theme.Service">Service</option>
+            </InputSelect>
+            <ValidationMessage For="@(() => _viewModel.Theme)" />
+        </div>
+        <div class="form-group shadow-textarea">
+            <label for="DescrId">Description:</label>
+            <InputTextArea class="form-control" rows="5" placeholder="Write Description with Markdown..." id="DescrId" @bind-Value="_viewModel.Description" />
+            <ValidationMessage For="@(() => _viewModel.Description)" />
+        </div>
+        <div class="form-group">
+            End:
+            <InputDate class="form-control" @bind-Value="_viewModel.End" />
+            <ValidationMessage For="@(() => _viewModel.End)" />
+        </div>
+        <div class="form-group">
+            <label for="NeedMoneyid">NeedMoney:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">$</div>
+                </div>
+                <InputNumber class="form-control" aria-label="Amount (to the nearest dollar)" id="NeedMoneyid" @bind-Value="_viewModel.NeedMoney" />
+                <div class="input-group-append">
+                    <div class="input-group-text">.00</div>
+                </div>
             </div>
-            <InputNumber class="form-control" aria-label="Amount (to the nearest dollar)" id="NeedMoneyid" @bind-Value="_viewModel.NeedMoney" />
-            <div class="input-group-append">
-                <div class="input-group-text">.00</div>
+            <ValidationMessage For="@(() => _viewModel.NeedMoney)" />
+        </div>
+        <div class="form-group">
+            <label for="URLVideoid">URLVideo:</label>
+            <InputText @bind-Value="_viewModel.URLVideo" class="form-control" id="URLVideoid" />
+            <ValidationMessage For="@(() => _viewModel.URLVideo)" />
+        </div>
+
+        <div class="form-group">
+            <div class="custom-file">
+                <InputFile OnChange="LoadMainImage" class="custom-file-input" id="MainImageId" />
+                <label class="custom-file-label" for="MainImageId">Choose Main Image...</label>
+                <ValidationMessage For="@(() => _viewModel.isLoadedMainImage)" />
             </div>
         </div>
-        <ValidationMessage For="@(() => _viewModel.NeedMoney)" />
-    </div>
-    <div class="form-group">
-        <label for="URLVideoid">URLVideo:</label>
-        <InputText @bind-Value="_viewModel.URLVideo" class="form-control" id="URLVideoid" />
-        <ValidationMessage For="@(() => _viewModel.URLVideo)" />
-    </div>
+        <div class="form-group">
+            <div class="custom-file">
+                <InputFile multiple OnChange="LoadImages" class="custom-file-input" id="ImagesId" />
+                <label class="custom-file-label" for="ImagesId">Choose images...</label>
 
-    <div class="form-group">
-        <div class="custom-file">
-            <InputFile OnChange="LoadMainImage" class="custom-file-input" id="MainImageId" />
-            <label class="custom-file-label" for="MainImageId">Choose Main Image...</label>
-            <ValidationMessage For="@(() => _viewModel.isLoadedMainImage)" />
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="custom-file">
-            <InputFile multiple OnChange="LoadImages" class="custom-file-input" id="ImagesId" />
-            <label class="custom-file-label" for="ImagesId">Choose images...</label>
 
+        <div>
+            <input class="btn btn-primary" type="submit" value="Create" />
         </div>
-    </div>
-
-    <div>
-        <input class="btn btn-primary" type="submit" value="Create" />
-    </div>
-</EditForm>
-
+    </EditForm>
+</div>
 
 @code {
     [Parameter]
@@ -96,8 +97,8 @@
     {
         await base.OnInitializedAsync();
 
-        if(CompanyId != null)
-            EditCompany = _db.Companies.FirstOrDefault(c => c.Id == CompanyId);
+        if (CompanyId != null)
+            EditCompany = _db.Companies.Include(c => c.CompanyImages).FirstOrDefault(c => c.Id == CompanyId);
 
         if (EditCompany != null)
         {
@@ -109,8 +110,9 @@
             _viewModel.Description = EditCompany.Description;
             _viewModel.End = EditCompany.End;
             _viewModel.MainImage = EditCompany.MainImage;
-            _viewModel.Images = EditCompany.CompanyImages.Select(ci => ci.PhotoPath).ToList();
+            _viewModel.Images = EditCompany.CompanyImages?.Select(ci => ci.PhotoPath).ToList();
             _viewModel.isLoadedMainImage = true;
+            _viewModel.isLoadedCompanyImages = true;
         }
 
         _editContext = new EditContext(_viewModel);
@@ -128,15 +130,32 @@
             EditCompany.End = _viewModel.End;
             EditCompany.MainImage = _viewModel.MainImage;
             EditCompany.CompanyImages = _viewModel.Images.Select(imgUrl => new ImagesCompany { PhotoPath = imgUrl }).ToList();
+
+            EditCompany.IsEnd = EditCompany.End < DateTime.Now;
         }
         else
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var claimUser = authState.User;
             var owner = await _userManager.GetUserAsync(claimUser);
-            Company company = new Company { Name = _viewModel.Name, Theme = _viewModel.Theme, End = _viewModel.End, NumberUsers = 0,
-                Rating = 0, Description = _viewModel.Description, CurrentMoney = 0, NeedMoney = _viewModel.NeedMoney, URLVideo = _viewModel.URLVideo,
-                DataCreate = DateTime.Now, LastEdit = DateTime.MinValue, EndAtNextDay = false, IsEnd = false, UserID = owner.Id, MainImage = _viewModel.MainImage};
+            Company company = new Company
+            {
+                Name = _viewModel.Name,
+                Theme = _viewModel.Theme,
+                End = _viewModel.End,
+                NumberUsers = 0,
+                Rating = 0,
+                Description = _viewModel.Description,
+                CurrentMoney = 0,
+                NeedMoney = _viewModel.NeedMoney,
+                URLVideo = _viewModel.URLVideo,
+                DataCreate = DateTime.Now,
+                LastEdit = DateTime.MinValue,
+                EndAtNextDay = false,
+                IsEnd = false,
+                UserID = owner.Id,
+                MainImage = _viewModel.MainImage
+            };
             if (_viewModel.Images != null)
             {
                 company.CompanyImages = _viewModel.Images.Select(imgUrl => new ImagesCompany { PhotoPath = imgUrl }).ToList();
@@ -153,6 +172,7 @@
         var file = files.FirstOrDefault();
         if (file != null)
         {
+            _viewModel.isLoadedMainImage = false;
             using (var ms = new MemoryStream())
             {
                 Task task1 = file.Data.CopyToAsync(ms);
@@ -169,8 +189,6 @@
                 _editContext.Validate();
                 StateHasChanged();
             }
-
-
         }
     }
 
@@ -179,7 +197,8 @@
         List<string> urlLinks = new List<string>();
         if (files != null && files.Length > 0)
         {
-            foreach(var file in files)
+            _viewModel.isLoadedCompanyImages = false;
+            foreach (var file in files)
             {
                 using (var ms = new MemoryStream())
                 {
@@ -191,11 +210,12 @@
                     await _is3.UploadObjectAsync(ms, filePath);
                     urlLinks.Add(_is3.GeneratePreSignedURL(filePath, false, file.Name));
                     Console.WriteLine("######### UploadedToS3");
-
-
                 }
             }
             _viewModel.Images = urlLinks;
+            _viewModel.isLoadedCompanyImages = true;
+            _editContext.Validate();
+            StateHasChanged();
             Console.WriteLine("Images Loaded ------------------------------");
         }
     }

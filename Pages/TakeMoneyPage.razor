@@ -1,4 +1,5 @@
-﻿@inject ApplicationDbContext _db;
+﻿@page "/Company/TakeMoney/{CompanyId:int}"
+@inject ApplicationDbContext _db;
 @inject AuthenticationStateProvider AuthenticationStateProvider;
 @inject UserManager<User> _userManager;
 @inject NavigationManager NavigationManager
@@ -8,14 +9,15 @@
 @attribute [Authorize]
 
 <h2 class="text-center">Take Money</h2>
+@if (LocalCompany != null)
+{
+    <h3>You collect @LocalCompany.CurrentMoney $</h3>
+    <h3>Procent crowdfundinga is @prosent %</h3>
+    <h3>You will take @money $</h3>
+    <br>
 
-<h3>You collect @LocalCompany.CurrentMoney $</h3>
-<h3>Procent crowdfundinga is @prosent %</h3>
-<h3>You will take @money $</h3>
-<br>
-
-<button class="btn btn-default" @onclick="DeleteCompany">Take and Delete</button>
-
+    <button class="btn btn-primary" @onclick="DeleteCompany">Take and Delete</button>
+}
 
 
 @code {
@@ -23,6 +25,8 @@
     public Company LocalCompany { get; set; }
     [Parameter]
     public User User { get; set; }
+    [Parameter]
+    public int? CompanyId { get; set; } = null;
 
     public int prosent;
     public double money;
@@ -33,20 +37,16 @@
     {
         await base.OnInitializedAsync();
 
-        int? companyId = GetQueryParm("companyid");
-        if (companyId != null)
-        {
-            var claimUser = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User;
-            User = await _userManager.GetUserAsync(claimUser);
-            LocalCompany = await _db.Companies.FirstOrDefaultAsync(c => c.Id == companyId);
-            if (LocalCompany.IsEnd == false)
-                RedirectToHome();
-
-            money = LocalCompany.CurrentMoney * 0.9;
-            prosent = 10;
-        }
-        else
+        //int? companyId = GetQueryParm("companyid");
+        Console.WriteLine(CompanyId);
+        var claimUser = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User;
+        User = await _userManager.GetUserAsync(claimUser);
+        LocalCompany = await _db.Companies.FirstOrDefaultAsync(c => c.Id == CompanyId);
+        if (LocalCompany == null || LocalCompany.IsEnd == false || LocalCompany.UserID != User.Id)
             RedirectToHome();
+
+        money = LocalCompany.CurrentMoney * 0.9;
+        prosent = 10;
     }
 
     private void RedirectToHome()

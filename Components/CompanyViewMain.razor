@@ -12,8 +12,8 @@
     <div class="row">
         @if (LocalCompany.UserID == User?.Id && LocalCompany.IsEnd)
         {
-            <div class="col-md-offset-10">
-                <a class="btn btn-danger" onclick="RedirectTake(@LocalCompany.Id)">Take money and end company</a>
+            <div class="col-md-4 offset-md-9">
+                <button class="btn btn-danger" @onclick="RedirectToTakeMoney">Take money and end company</button>
             </div>
         }
         <div class="col-md-12 text-center"><h3>Theme of Company: @LocalCompany.Theme</h3></div>
@@ -127,5 +127,10 @@
         }
 
 
+    }
+
+    private void RedirectToTakeMoney()
+    {
+        NavigationManager.NavigateTo("/Company/TakeMoney/" + LocalCompany.Id);
     }
 }

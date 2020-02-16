@@ -40,7 +40,12 @@ namespace Crowfounding.ViewModels
         [Range(typeof(bool), "true", "true",
         ErrorMessage = "need Main Image.")]
         public bool isLoadedMainImage { get; set; }
-        
+
+        [Required]
+        [Range(typeof(bool), "true", "true",
+        ErrorMessage = "CompanyImages Loadding.")]
+        public bool isLoadedCompanyImages { get; set; }
+
         public string MainImage { get; set; }
         public List<string> Images { get; set; }
     }

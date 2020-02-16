@@ -10,15 +10,22 @@
         <h2>Company Managment</h2>
     </div>
 
-    <form method="post">
-        <NavLink class="btn btn-primary" href="CreateCompany">CreateCompany</NavLink>
-        <br>
-        <div class="form-actions">
-            <input class="form-control" type="text" name="SearchString" @oninput="FilterFunc" />
-            <input type="submit" value="Search" class="btn btn-default" />
-            <a class="btn btn-default" asp-action="Users" asp-controller="Admin">To List</a>
+    <div class="form-row align-items-center">
+        <div class="col-auto my-1">
+            <NavLink class="btn btn-primary" href="CreateCompany">CreateCompany</NavLink>
         </div>
-    </form>
+        <div class="col-sm-3 my-1">
+            <input class="form-control" type="text" name="SearchString" @bind="SearchText" @oninput="(e => FilterFunc(e.Value.ToString()))" />
+        </div>
+        <div class="col-auto my-1">
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="OnlyMyCheck" @onchange="OnlyMyChange">
+                <label class="form-check-label" for="OnlyMyCheck">
+                    Only My Companies
+                </label>
+            </div>
+        </div>
+    </div>
 
     <hr />
     @if (CompaniesFilter != null)
@@ -45,10 +52,17 @@
                             <td>@company.End.ToShortDateString()</td>
                             <td>@company.CurrentMoney</td>
                             <td>@company.NeedMoney</td>
-                            <td @onclick:stopPropagation>
-                                <NavLink class="btn btn-sm btn-danger" href='@($"CreateCompany/edit/{company.Id}")'>Edit</NavLink>
-                                <a class="btn btn-sm btn-danger" target="_top" href='@($"DeleteCompany{GetUri(company.Id)}")'>Delete</a>
-                            </td>
+                            @if (company.UserID == User.Id)
+                            {
+                                <td @onclick:stopPropagation>
+                                    <NavLink class="btn btn-sm btn-info" href='@($"CreateCompany/edit/{company.Id}")'>Edit</NavLink>
+                                    <a class="btn btn-sm btn-danger" target="_top" href='@($"DeleteCompany{GetUri(company.Id)}")'>Delete</a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
                         </tr>
                     }
                 </tbody>
@@ -62,6 +76,8 @@
     public User User { get; set; }
     [Parameter]
     public List<Company> Companies { get; set; }
+    [Parameter]
+    public string SearchText { get; set; }
     public List<Company> CompaniesFilter { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -72,14 +88,14 @@
         var claimUser = authState.User;
         User = await _userManager.GetUserAsync(claimUser);
 
-        Companies = _db.Companies.ToList();
+        Companies = _db.Companies.Where(c => c.UserID == User.Id).ToList();
         CompaniesFilter = Companies;
+        OnlyMyChange(new ChangeEventArgs { Value = false });
     }
 
-    public async Task FilterFunc(ChangeEventArgs e)
+    public async Task FilterFunc(string searchText)
     {
-        string str = e.Value.ToString();
-        CompaniesFilter = string.IsNullOrWhiteSpace(str) ? Companies : Companies.Where(c => c.Name.ToLower().Contains(str.ToLower())).ToList();
+        CompaniesFilter = string.IsNullOrWhiteSpace(searchText) ? Companies : Companies.Where(c => c.Name.ToLower().Contains(searchText.ToLower())).ToList();
     }
 
     public void RedirectToCompany(int companyId)
@@ -94,5 +110,24 @@
         var query = $"?companyId={companyId}&" +
             $"redirectUri={Uri.EscapeDataString(uri)}";
         return query;
+    }
+
+    public async Task OnlyMyChange(ChangeEventArgs e)
+    {
+        if ((bool)e.Value)
+            Companies = _db.Companies.Where(c => c.UserID == User.Id).ToList();
+        else
+        {
+            Companies = _db.Companies.ToList();
+            var MyCompanies = Companies.Where(c => c.UserID == User.Id).ToList();
+            var NotMyCompanies = Companies.Except(MyCompanies).ToList();
+            MyCompanies.Sort((c1, c2) => c1.Name.ToLower().CompareTo(c2.Name.ToLower()));
+            NotMyCompanies.Sort((c1, c2) => c1.Name.CompareTo(c2.Name));
+            Companies = MyCompanies;
+            Companies.AddRange(NotMyCompanies);
+        }
+        CompaniesFilter = Companies;
+        FilterFunc(SearchText);
+        StateHasChanged();
     }
 }
