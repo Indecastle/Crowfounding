@@ -117,22 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Most_Rating_Companies" xml:space="preserve">
-    <value>Most Rating Companies</value>
+  <data name="Main_Description" xml:space="preserve">
+    <value>Description</value>
   </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name</value>
+  <data name="Main_Enformation1" xml:space="preserve">
+    <value>Enformation! Company will be end tomorrow</value>
   </data>
-  <data name="No_company" xml:space="preserve">
-    <value>No companies in this web</value>
+  <data name="Main_Money" xml:space="preserve">
+    <value>Money</value>
   </data>
-  <data name="Open" xml:space="preserve">
-    <value>Open</value>
+  <data name="Main_NoPhotos" xml:space="preserve">
+    <value>No Photos in Company</value>
   </data>
-  <data name="Rating" xml:space="preserve">
-    <value>Rating</value>
+  <data name="Main_Photos" xml:space="preserve">
+    <value>Photos</value>
   </data>
-  <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
+  <data name="Main_RatingComapany" xml:space="preserve">
+    <value>Rating Comapany</value>
+  </data>
+  <data name="Main_TakeMoney" xml:space="preserve">
+    <value>Take money and end company</value>
+  </data>
+  <data name="Main_ThemeOfCompany" xml:space="preserve">
+    <value>Theme of Company</value>
+  </data>
+  <data name="Main_VideoCompany" xml:space="preserve">
+    <value>Video Company</value>
   </data>
 </root>

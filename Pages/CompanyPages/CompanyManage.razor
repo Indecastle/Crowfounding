@@ -7,12 +7,12 @@
 
 <div class="container-fluid">
     <div class="page-header">
-        <h2>Company Managment</h2>
+        <h2>@L["Title"]</h2>
     </div>
 
     <div class="form-row align-items-center">
         <div class="col-auto my-1">
-            <NavLink class="btn btn-primary" href="CreateCompany">CreateCompany</NavLink>
+            <NavLink class="btn btn-primary" href="CreateCompany">@L["CreateCompany"]</NavLink>
         </div>
         <div class="col-sm-3 my-1">
             <input class="form-control" type="text" name="SearchString" @bind="SearchText" @oninput="(e => FilterFunc(e.Value.ToString()))" />
@@ -21,7 +21,7 @@
             <div class="form-check mb-2">
                 <input class="form-check-input" type="checkbox" id="OnlyMyCheck" @onchange="OnlyMyChange">
                 <label class="form-check-label" for="OnlyMyCheck">
-                    Only My Companies
+                    @L["CheckboxOnlyMy"]
                 </label>
             </div>
         </div>
@@ -34,11 +34,11 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Theme</th>
-                        <th scope="col">End</th>
-                        <th scope="col">Current Mony</th>
-                        <th scope="col">NeedMoney</th>
+                        <th scope="col">@L["Table_Name"]</th>
+                        <th scope="col">@L["Table_Theme"]</th>
+                        <th scope="col">@L["Table_End"]</th>
+                        <th scope="col">@L["Table_Money"]</th>
+                        <th scope="col">@L["Table_NeedMoney"]</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
@@ -55,8 +55,8 @@
                             @if (company.UserID == User.Id)
                             {
                                 <td @onclick:stopPropagation>
-                                    <NavLink class="btn btn-sm btn-info" href='@($"CreateCompany/edit/{company.Id}")'>Edit</NavLink>
-                                    <a class="btn btn-sm btn-danger" target="_top" href='@($"DeleteCompany{GetUri(company.Id)}")'>Delete</a>
+                                    <NavLink class="btn btn-sm btn-info" href='@($"CreateCompany/edit/{company.Id}")'>@L["Edit"]</NavLink>
+                                    <a class="btn btn-sm btn-danger" target="_top" href='@($"DeleteCompany{GetUri(company.Id)}")'>@L["Delete"]</a>
                                 </td>
                             }
                             else

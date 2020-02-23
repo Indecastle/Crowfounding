@@ -10,13 +10,14 @@
 @inject SingleCommentService _chatService;
 @inject IJSRuntime JsRuntime;
 @inject IS3Service _is3;
+@inject IStringLocalizer<Crowfounding.Pages.CompanyPages.CompanyView> L
 @implements IDisposable
 
 
 <div class="container ">
     <div class="row ">
         <div class="col-md-3" style="margin-bottom: 10px;">
-            <button type="button" class="btn btn-outline-info @(Comments.Any(m => m.Selecting) ? "":"mydisable")" @onclick="@RemoveSelectedComments">remove Comment</button>
+            <button type="button" class="btn btn-outline-info @(Comments.Any(m => m.Selecting) ? "":"mydisable")" @onclick="@RemoveSelectedComments">@L["Comment_Remove Comment"]</button>
         </div>
         <div class="col-md-6  " id="chat">
             @if (Comments != null)
@@ -55,14 +56,14 @@
         </div>
     </div>
     <div class="col-md-12">
-        <button type="button" class="btn btn-secondary @(IsEditing ? "":"mydisable")" style="margin-bottom: 10px;" @onclick="@StopEditComment">stop change</button>
+        <button type="button" class="btn btn-secondary @(IsEditing ? "":"mydisable")" style="margin-bottom: 10px;" @onclick="@StopEditComment">@L["Comment_StopChange"]</button>
         <form method="post" action="#" enctype="multipart/form-data">
             <label class="fileContainer mydisable" id="fileSelectBox" ondragleave="leaveDrop2(event)" ondrop="onDrop(event)" ondragover="dragOver(event)">
                 <InputFile multiple OnChange="ViewFile" />
             </label>
         </form>
-        <textarea id="chatSend" class="form-control" style="resize:none;" name="chat_comment" ondragover="dragOver2(event)" placeholder="Send a comment" rows="3" @bind-value="@newComment" @bind-value:event="oninput"></textarea>
-        <input type="submit" id="mybutton" @onclick="SendAll" class="btn btn-outline-primary btn-block" />
+        <textarea id="chatSend" class="form-control" style="resize:none;" name="chat_comment" ondragover="dragOver2(event)" placeholder="@L["Comment_SendComment"]" rows="3" @bind-value="@newComment" @bind-value:event="oninput"></textarea>
+        <input type="submit" id="mybutton" @onclick="SendAll" class="btn btn-outline-primary btn-block" value="@L["Comment_Send"]"/>
         <div id="mylastpage"></div>
     </div>
 </div>

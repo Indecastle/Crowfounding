@@ -23,4 +23,22 @@
     <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.3.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Resources\Pages\TakeMoneyPage.en.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TakeMoneyPage.en.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Pages\TakeMoneyPage.en.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TakeMoneyPage.en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Pages\TakeMoneyPage.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

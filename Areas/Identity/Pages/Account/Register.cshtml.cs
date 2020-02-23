@@ -83,7 +83,7 @@ namespace Crowfounding.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = new User { UserName = Input.Email, Email = Input.Email, DataLogin = DateTime.Now, DateRegister = DateTime.Now, IsBlocked = false, Name = Input.Name, 
-                    Language = CultureType.en, Theme = ThemeType.Original };
+                    Language = CultureType.ru, Theme = ThemeType.Original };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

@@ -4,27 +4,28 @@
 @inject UserManager<User> _userManager
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime;
+@inject IStringLocalizer<UsersManager> L
 @attribute [Authorize(Roles = "Admin, SuperAdmin")]
-<h3>UsersManager</h3>
+<h3>@L["Title"]</h3>
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-10">
             <div class="form-row align-items-center">
                 <div class="col-sm-3 my-1">
-                    <label class="sr-only" for="inlineFormInputGroupUsername">Имя пользователя</label>
+                    <label class="sr-only" for="inlineFormInputGroupUsername">@L["Name_two"]</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <div class="input-group-text">Name: </div>
+                            <div class="input-group-text">@L["Name"]: </div>
                         </div>
-                        <input type="text" class="form-control" id="inlineFormInputGroupUsername" placeholder="Имя пользователя" @bind="SearchText" @oninput="(e => FilterFunc(e.Value.ToString()))">
+                        <input type="text" class="form-control" id="inlineFormInputGroupUsername" placeholder="@L["Name_two"]" @bind="SearchText" @oninput="(e => FilterFunc(e.Value.ToString()))">
                     </div>
                 </div>
                 <div class="col-auto my-1">
-                    <button type="submit" class="btn btn-primary" @onclick="(e => BlockRange())">Block</button>
+                    <button type="submit" class="btn btn-primary" @onclick="(e => BlockRange())">@L["Block"]</button>
                 </div>
                 <div class="col-auto my-1">
-                    <button type="submit" class="btn btn-primary" @onclick="(e => BlockRange(false))">UnBlock</button>
+                    <button type="submit" class="btn btn-primary" @onclick="(e => BlockRange(false))">@L["UnBlock"]</button>
                 </div>
             </div>
 
@@ -34,11 +35,11 @@
                     <thead>
                         <tr>
                             <th><input type="checkbox" id="select_all" title="All" @bind="@AllSelectBox" @onclick="SelectAll"></th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Data Registration</th>
-                            <th>Last Login</th>
-                            <th>Active</th>
+                            <th>@L["Table_Name"]</th>
+                            <th>@L["Table_Email"]</th>
+                            <th>@L["Table_Data"]</th>
+                            <th>@L["Table_LastLogin"]Last Login</th>
+                            <th>@L["Table_Active"]</th>
                             <th></th>
                         </tr>
 

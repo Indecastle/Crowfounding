@@ -117,22 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Most_Rating_Companies" xml:space="preserve">
-    <value>Most Rating Companies</value>
+  <data name="button" xml:space="preserve">
+    <value>взять деньги и удалить компанию</value>
   </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name</value>
+  <data name="Info1" xml:space="preserve">
+    <value>Собранные деньги</value>
   </data>
-  <data name="No_company" xml:space="preserve">
-    <value>No companies in this web</value>
+  <data name="Info2" xml:space="preserve">
+    <value>Процент от сбора</value>
   </data>
-  <data name="Open" xml:space="preserve">
-    <value>Open</value>
+  <data name="Info3" xml:space="preserve">
+    <value>Вы получите</value>
   </data>
-  <data name="Rating" xml:space="preserve">
-    <value>Rating</value>
-  </data>
-  <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
+  <data name="Title" xml:space="preserve">
+    <value>Взять деньги</value>
   </data>
 </root>

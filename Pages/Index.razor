@@ -14,16 +14,16 @@
     {
         <div class="row">
 
-            @foreach (var company in Model.OrderByDescending(s => s.Rating).Take(3))
+            @foreach (var company in Model.OrderByDescending(s => s.Rating))
             {
                 <div class="col-sm-6 col-md-4 my-grid">
                     <div class="img-thumbnail text-center">
                         <div class="grid-div-image"><img src="@company.MainImage" class="grid-image" /></div>
                         <div class="caption">
-                            <h3>Name: @company.Name</h3>
-                            <h4>Theme: @company.Theme</h4>
-                            <h5>Rating: @company.Rating</h5>
-                            <p><NavLink class="btn btn-primary" href="@("CompanyView/"+company.Id)">Open</NavLink></p>
+                            <h3>@L["Name"]: @company.Name</h3>
+                            <h4>@L["Theme"]: @company.Theme</h4>
+                            <h5>@L["Rating"]: @company.Rating</h5>
+                            <p><NavLink class="btn btn-primary" href="@("CompanyView/"+company.Id)">@L["Open"]</NavLink></p>
                         </div>
                     </div>
                 </div>

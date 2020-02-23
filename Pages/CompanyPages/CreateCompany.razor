@@ -8,7 +8,7 @@
 @inject NavigationManager NavigationManager
 @inject IStringLocalizer<CreateCompany> L
 @attribute [Authorize]
-<h2>CreateCompany</h2>
+    <h2>@(isEditing ? "EditCompany" : "CreateCompany")</h2>
 
 <div class="container">
     <EditForm EditContext="@_editContext" OnValidSubmit="HandleValidSubmit">
@@ -77,7 +77,7 @@
         </div>
 
         <div>
-            <input class="btn btn-primary" type="submit" value="Create" />
+            <input class="btn btn-primary" type="submit" value="@(isEditing ? "Edit" : "Create")" />
         </div>
     </EditForm>
 </div>
@@ -87,7 +87,7 @@
     public int? CompanyId { get; set; } = null;
     public bool isEditing;
 
-    private CompanyViewModel _viewModel = new CompanyViewModel { Theme = Theme.Education };
+    private CompanyViewModel _viewModel = new CompanyViewModel { Theme = Theme.Education, isLoadedCompanyImages = true };
     private EditContext _editContext;
     private Company EditCompany;
     private IFileListEntry MainImage { get; set; }

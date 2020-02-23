@@ -117,22 +117,133 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Most_Rating_Companies" xml:space="preserve">
-    <value>Most Rating Companies</value>
+  <data name="Base_Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Base_Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>ConfirmPassword</value>
+  </data>
+  <data name="Crowdfunding" xml:space="preserve">
+    <value>Crowdfunding</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Forgot your password" xml:space="preserve">
+    <value>Forgot your password</value>
+  </data>
+  <data name="Hello" xml:space="preserve">
+    <value>Hello</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="Login_h4" xml:space="preserve">
+    <value>Use a local account to log in</value>
+  </data>
+  <data name="Login_Login" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="ManageNav_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="ManageNav_ExternalLogins" xml:space="preserve">
+    <value>External logins</value>
+  </data>
+  <data name="ManageNav_Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="ManageNav_PersonalData" xml:space="preserve">
+    <value>Personal data</value>
+  </data>
+  <data name="ManageNav_Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="ManageNav_TwoFactor" xml:space="preserve">
+    <value>Two-factor authentication</value>
+  </data>
+  <data name="Manage_Change" xml:space="preserve">
+    <value>Change your account settings</value>
+  </data>
+  <data name="Manage_ChangePassword" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="Manage_Change_Email" xml:space="preserve">
+    <value>Change email</value>
+  </data>
+  <data name="Manage_Email" xml:space="preserve">
+    <value>Manage email</value>
+  </data>
+  <data name="Manage_external_AddAnotherService" xml:space="preserve">
+    <value>Add another service to log in</value>
+  </data>
+  <data name="Manage_external_ExternalLogins" xml:space="preserve">
+    <value>Manage your external logins</value>
+  </data>
+  <data name="Manage_external_RegisteredLogins" xml:space="preserve">
+    <value>Registered Logins</value>
+  </data>
+  <data name="Manage_Manage" xml:space="preserve">
+    <value>Manage your account</value>
+  </data>
+  <data name="Manage_Profile_Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Manage_SetPassword" xml:space="preserve">
+    <value>Set password</value>
+  </data>
+  <data name="Manage_UpdatePassword" xml:space="preserve">
+    <value>Update password</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
-  <data name="No_company" xml:space="preserve">
-    <value>No companies in this web</value>
+  <data name="NewEmail" xml:space="preserve">
+    <value>New email</value>
   </data>
-  <data name="Open" xml:space="preserve">
-    <value>Open</value>
+  <data name="NewPassword" xml:space="preserve">
+    <value>New password</value>
   </data>
-  <data name="Rating" xml:space="preserve">
-    <value>Rating</value>
+  <data name="NoExternalLogins" xml:space="preserve">
+    <value>There are no external authentication services configured</value>
   </data>
-  <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
+  <data name="OldPassword" xml:space="preserve">
+    <value>Current password</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>PhoneNumber</value>
+  </data>
+  <data name="Privacy" xml:space="preserve">
+    <value>Privacy</value>
+  </data>
+  <data name="Register as a new user" xml:space="preserve">
+    <value>Register as a new user</value>
+  </data>
+  <data name="Register_CreateNewAccount" xml:space="preserve">
+    <value>Create a new account</value>
+  </data>
+  <data name="Remember me" xml:space="preserve">
+    <value>Remember me</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SetPassword" xml:space="preserve">
+    <value>Set password</value>
+  </data>
+  <data name="UseExternalLogIn" xml:space="preserve">
+    <value>Use another service to log in</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>User name</value>
   </data>
 </root>

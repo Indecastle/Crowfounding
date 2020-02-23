@@ -41,5 +41,21 @@ namespace Crowfounding.Services
 
             return new HtmlString(@"<link href=""css/site.css"" rel=""stylesheet"" />");
         }
+
+        public string GetThemeHtml_Identity()
+        {
+            if (_context.HttpContext.Request.Cookies.ContainsKey("Theme"))
+            {
+                string a = _context.HttpContext.Request.Cookies["Theme"];
+                if (Enum.TryParse(a, true, out ThemeType theme))
+                    switch (theme)
+                    {
+                        case ThemeType.Original: return "navbar-light bg-white";
+                        case ThemeType.Black: return "navbar-dark bg-dark";
+                    }
+            }
+
+            return "navbar-light bg-white";
+        }
     }
 }

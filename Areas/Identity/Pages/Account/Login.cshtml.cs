@@ -94,10 +94,12 @@ namespace Crowfounding.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    user.DataLogin = DateTime.Now;
                     HttpContext.Response.Cookies.Append("Theme", user.Theme.ToString());
                     HttpContext.Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, 
                         CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(user.Language.ToString())));
                     _logger.LogInformation("User logged in.");
+                    await _userManager.UpdateAsync(user);
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

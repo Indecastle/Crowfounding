@@ -8,15 +8,15 @@
 @inject IStringLocalizer<TakeMoneyPage> L
 @attribute [Authorize]
 
-<h2 class="text-center">Take Money</h2>
+<h2 class="text-center">@L["Title"]</h2>
 @if (LocalCompany != null)
 {
-    <h3>You collect @LocalCompany.CurrentMoney $</h3>
-    <h3>Procent crowdfundinga is @prosent %</h3>
-    <h3>You will take @money $</h3>
+    <h3>@L["Info1"] @LocalCompany.CurrentMoney $</h3>
+    <h3>@L["Info2"] @prosent %</h3>
+    <h3>@L["Info3"] @money $</h3>
     <br>
 
-    <button class="btn btn-primary" @onclick="DeleteCompany">Take and Delete</button>
+    <button class="btn btn-primary" @onclick="DeleteCompany">@L["button"]</button>
 }
 
 
@@ -38,7 +38,6 @@
         await base.OnInitializedAsync();
 
         //int? companyId = GetQueryParm("companyid");
-        Console.WriteLine(CompanyId);
         var claimUser = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User;
         User = await _userManager.GetUserAsync(claimUser);
         LocalCompany = await _db.Companies.FirstOrDefaultAsync(c => c.Id == CompanyId);

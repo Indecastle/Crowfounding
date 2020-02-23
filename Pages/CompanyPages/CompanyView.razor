@@ -15,25 +15,25 @@
 
         <div class="row">
             <div class="col-md-12 text-center">
-                <h2>Company @LocalCompany.Name</h2>
+                <h2>@L["Company"] @LocalCompany.Name</h2>
             </div>
         </div>
     }
     <ul class="nav nav-tabs" style="margin-bottom: 10px; cursor: default;">
         <li class="nav-item">
-            <a class="nav-link @CheckActivePartial(1)" @onclick="(e => ActivePartial = 1)">Main</a>
+            <a class="nav-link @CheckActivePartial(1)" @onclick="(e => ActivePartial = 1)">@L["Main"]</a>
         </li>
         @if (User != null)
         {
             <li class="nav-item">
-                <a class="nav-link @CheckActivePartial(2)" @onclick="(e => ActivePartial = 2)">Comments</a>
+                <a class="nav-link @CheckActivePartial(2)" @onclick="(e => ActivePartial = 2)">@L["Comments"]</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link @CheckActivePartial(3)" @onclick="(e => ActivePartial = 3)">Donate</a>
+                <a class="nav-link @CheckActivePartial(3)" @onclick="(e => ActivePartial = 3)">@L["Donate"]</a>
             </li>
         }
         <li class="nav-item">
-            <a class="nav-link @CheckActivePartial(4)" @onclick="(e => ActivePartial = 4)">Rating</a>
+            <a class="nav-link @CheckActivePartial(4)" @onclick="(e => ActivePartial = 4)">@L["Rating"]</a>
         </li>
     </ul>
 

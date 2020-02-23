@@ -4,6 +4,8 @@
 @{
     Layout = null;
 }
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SharedResource> SL
 @inject ThemeService _themeService
 
 <!DOCTYPE html>
@@ -11,7 +13,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Crowfounding</title>
+    <title>@SL["Crowfounding"]</title>
     <base href="~/" />
     <link rel="stylesheet" href="~/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/font-awesome/css/all.min.css" />
@@ -40,7 +42,7 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-    
+
 
     <script src="_framework/blazor.server.js"></script>
     <script src="~/jquery/jquery.min.js"></script>

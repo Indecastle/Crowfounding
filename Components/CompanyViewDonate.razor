@@ -3,19 +3,19 @@
 @inject UserManager<User> _userManager;
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime;
-@inject IStringLocalizer<CompanyViewMain> L
+@inject IStringLocalizer<Crowfounding.Pages.CompanyPages.CompanyView> L
 @using System.ComponentModel.DataAnnotations;
 
 @if (Model != null)
 {
     <div class="page-header">
-        <h3>Donate to company </h3>
+        <h3>@L["Donate_Title"] </h3>
     </div>
     <br>
     @if (!Model.IsEnd)
     {
-        <h3 class="text-center">Test</h3>
-        <div class="col-md-8"><h5>Money @Model.CurrentMoney / @Model.NeedMoney</h5></div>
+<h3 class="text-center">@L["Donate_Money"]</h3>
+        <div class="col-md-8"><h5>@L["Donate_Money"] @Model.CurrentMoney / @Model.NeedMoney</h5></div>
         <br>
         <div class="row">
             <EditForm Model="_viewModel" OnValidSubmit="HandleValidSubmit">
@@ -72,7 +72,7 @@
     }
     else
     {
-        <h3 class="text-center text-danger"> Crowdfunding company end. Thanks for donate.</h3>
+        <h3 class="text-center text-danger"> @L["Donate_IsEnd"].</h3>
     }
 }
 

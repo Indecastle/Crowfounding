@@ -117,22 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Most_Rating_Companies" xml:space="preserve">
-    <value>Most Rating Companies</value>
+  <data name="Block" xml:space="preserve">
+    <value>Заблокировать</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>Name</value>
+    <value>Название</value>
   </data>
-  <data name="No_company" xml:space="preserve">
-    <value>No companies in this web</value>
+  <data name="Name_two" xml:space="preserve">
+    <value>Имя пользователя</value>
   </data>
-  <data name="Open" xml:space="preserve">
-    <value>Open</value>
-  </data>
-  <data name="Rating" xml:space="preserve">
-    <value>Rating</value>
-  </data>
-  <data name="Theme" xml:space="preserve">
+  <data name="Table_Active" xml:space="preserve">
     <value>Theme</value>
+  </data>
+  <data name="Table_Data" xml:space="preserve">
+    <value>Дата регистрации</value>
+  </data>
+  <data name="Table_Email" xml:space="preserve">
+    <value>Почта</value>
+  </data>
+  <data name="Table_LastLogin" xml:space="preserve">
+    <value>Последний</value>
+  </data>
+  <data name="Table_Name" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Управление пользователями</value>
+  </data>
+  <data name="UnBlock" xml:space="preserve">
+    <value>Разблокировать</value>
   </data>
 </root>

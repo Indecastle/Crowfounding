@@ -120,7 +120,19 @@
   <data name="Most_Rating_Companies" xml:space="preserve">
     <value>Наиболее популярные компании</value>
   </data>
+  <data name="Name" xml:space="preserve">
+    <value>Название</value>
+  </data>
   <data name="No_company" xml:space="preserve">
     <value>Нет компаний</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
+  <data name="Rating" xml:space="preserve">
+    <value>Рейтинг</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Тема</value>
   </data>
 </root>

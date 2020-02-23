@@ -95,6 +95,12 @@ namespace Crowfounding
             services.AddHostedService<TimedHostedService>();
             services.AddHttpContextAccessor();
 
+            services.AddControllersWithViews()
+                .AddDataAnnotationsLocalization(options => {
+                    options.DataAnnotationLocalizerProvider = (type, factory) =>
+                        factory.Create(typeof(SharedResource));
+                })
+                .AddViewLocalization();// добавляем локализацию представлений;
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             var supportedCultures = new List<CultureInfo> { new CultureInfo("ru"), new CultureInfo("en") };
             services.Configure<RequestLocalizationOptions>(options =>

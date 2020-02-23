@@ -117,22 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Most_Rating_Companies" xml:space="preserve">
-    <value>Most Rating Companies</value>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="No_company" xml:space="preserve">
-    <value>No companies in this web</value>
-  </data>
-  <data name="Open" xml:space="preserve">
-    <value>Open</value>
-  </data>
-  <data name="Rating" xml:space="preserve">
-    <value>Rating</value>
-  </data>
-  <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
+  <data name="h4" xml:space="preserve">
+    <value>Использовать локальный логин аккаунт</value>
   </data>
 </root>

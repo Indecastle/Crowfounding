@@ -83,22 +83,26 @@ namespace Crowfounding.Areas.Identity.Pages.Account
             }
             else
             {
-                string email = info.Principal.FindFirstValue(ClaimTypes.Email);
-                var user = await _userManager.FindByEmailAsync(email ?? "");
-                if (user != null)
-                {
-                    if (user.IsBlocked)
-                    {
-                        _logger.LogWarning("User account locked out.");
-                        return RedirectToPage("./Lockout");
-                    }
-                }
+                //string email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                //var user = await _userManager.FindByEmailAsync(email ?? "");
             }
 
             // Sign in the user with this external login provider if the user already has a login.
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor : true);
             if (result.Succeeded)
             {
+                User user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+                if (user.IsBlocked)
+                {
+                    await _signInManager.SignOutAsync();
+                    _logger.LogWarning("User account locked out.");
+                    return RedirectToPage("./Lockout");
+                }
+                else
+                {
+                    user.DataLogin = DateTime.Now;
+                    await _userManager.UpdateAsync(user);
+                }
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider. {ProviderKey}", info.Principal.Identity.Name, info.LoginProvider, info.ProviderKey);
                 return LocalRedirect(returnUrl);
             }
