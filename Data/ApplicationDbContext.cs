@@ -12,7 +12,7 @@ namespace Crowfounding.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -28,7 +28,12 @@ namespace Crowfounding.Data
             builder.Entity<Donation>()
                 .HasOne(a => a.Payer)
                 .WithMany(d => d.Donations)
-                .HasForeignKey(d => d.UserId)
+                .HasForeignKey(d => d.UserId);
+
+            builder.Entity<Donation>()
+                .HasOne(a => a.Company)
+                .WithMany(d => d.Donations)
+                .HasForeignKey(d => d.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Comment>()
@@ -38,15 +43,20 @@ namespace Crowfounding.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<ImagesCompany>()
-                .HasOne(a => a.Images)
+                .HasOne(a => a.Company)
                 .WithMany(d => d.CompanyImages)
                 .HasForeignKey(d => d.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Rating>()
-                .HasOne(a => a.Ranker)
+                .HasOne(a => a.User)
                 .WithMany(d => d.Ratings)
-                .HasForeignKey(d => d.UserId)
+                .HasForeignKey(d => d.UserId);
+
+            builder.Entity<Rating>()
+                .HasOne(a => a.Company)
+                .WithMany(d => d.Ratings)
+                .HasForeignKey(d => d.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 

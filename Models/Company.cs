@@ -48,8 +48,8 @@ namespace Crowfounding.Models
 
         public string UserID { get; set; }
         public virtual User Owner { get; set; }
-
-
+        public virtual ICollection<Rating> Ratings { get; set; }
+        public virtual ICollection<Donation> Donations { get; set; }
 
 
         public event Action<Comment, object> Sent;

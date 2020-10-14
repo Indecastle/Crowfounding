@@ -35,7 +35,7 @@
     @foreach (var rating in RatingsInViewModel)
     {
         <div class="container">
-            <p class="text-left">@rating.UserName</p>
+            <p class="text-left">@User.UserName</p>
             <p class="text-left">@rating.CompanyRating</p>
             <span class="text-left">@rating.When.ToString()</span>
         </div>
@@ -95,11 +95,10 @@
         Rating = new Rating
         {
             CompanyRating = _viewModel.Rating,
-            Ranker = User,
+            User = User,
             UserId = User.Id,
             CompanyId = LocalCompany.Id,
-            When = DateTime.Now,
-            UserName = User.UserName
+            When = DateTime.Now
         };
         _db.Ratings.Add(Rating);
         //Company tempCompany = await _db.Companies.FirstOrDefaultAsync(c => c.Id == Company.Id);

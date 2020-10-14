@@ -12,6 +12,7 @@ namespace Crowfounding.Models
         public string UserId { get; set; }
         public int CompanyId { get; set; }
 
+        public virtual Company Company { get; set; }
         public virtual User Payer { get; set; }
     }
 }

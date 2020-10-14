@@ -12,7 +12,7 @@ namespace Crowfounding.Models
         public string UserId { get; set; }
         public int CompanyId { get; set; }
         public DateTime When { get; set; }
-        public string UserName { get; set; }
-        public virtual User Ranker { get; set; }
+        public virtual User User { get; set; }
+        public virtual Company Company { get; set; }
     }
 }

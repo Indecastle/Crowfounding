@@ -28,7 +28,7 @@ namespace Crowfounding.Services
             IsTest = isTest;
             _logger = logger;
             _client = client;
-            //_client = new AmazonS3Client(@"AKIAJH7UACCI6ZCIA3XQ", @"+lcNsTgK9DabYaAMhXMYFD1e93rcnAbIOidGY1vv", RegionEndpoint.EUCentral1);
+            //_client = new AmazonS3Client(@"", @"", RegionEndpoint.EUCentral1);
             //_client = new AmazonS3Client(new BasicAWSCredentials("kek", "lol"), new AmazonS3Config
             //{
             //    ServiceURL = "http://192.168.99.100:4572",
