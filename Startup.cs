@@ -40,6 +40,7 @@ namespace Crowfounding
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -93,7 +94,7 @@ namespace Crowfounding
             services.AddSingleton<WeatherForecastService>();
             services.AddScoped<ThemeService>();
             services.AddHostedService<TimedHostedService>();
-            services.AddHttpContextAccessor();
+            
 
             services.AddControllersWithViews()
                 .AddDataAnnotationsLocalization(options => {
@@ -151,6 +152,8 @@ namespace Crowfounding
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRequestLocalization();
+
+            app.UseWebSockets();
 
             app.UseEndpoints(endpoints =>
             {

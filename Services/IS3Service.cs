@@ -17,6 +17,7 @@ namespace Crowfounding.Services
         Task DeleteFilesAsync(string fullPathName);
         Task<IEnumerable<S3Object>> ListFilesAsync(string dirpath);
         string GeneratePreSignedURL(string filepath, bool attachment, string fileName = null, bool useHttp = false);
+        string GetPublicURL(string filepath, string fileName = null);
 
     }
 }

@@ -235,7 +235,7 @@
                 Console.WriteLine("######### CopyEnded");
                 string filePath = "TempFiles/" + $"{file.Name}-{Guid.NewGuid()}-{Path.GetExtension(file.Name)}";
                 await _is3.UploadObjectAsync(ms, filePath);
-                string urlLink = _is3.GeneratePreSignedURL(filePath, false, file.Name);
+                string urlLink = _is3.GetPublicURL(filePath, file.Name);
                 Console.WriteLine("######### UploadedToS3");
 
                 _chatService.UploadImageComment(urlLink, file.Name);

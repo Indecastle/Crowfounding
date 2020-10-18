@@ -22,7 +22,7 @@ namespace Crowfounding
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("http://0.0.0.0:5010", "https://0.0.0.0:5011");
+                    // webBuilder.UseUrls("http://0.0.0.0:5010", "https://0.0.0.0:5011");
                     webBuilder.UseStartup<Startup>();
                 });
     }

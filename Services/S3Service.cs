@@ -19,6 +19,7 @@ namespace Crowfounding.Services
 {
     public class S3Service : IS3Service
     {
+        static string DomainPath { get; set; }
         public bool IsTest { get; set; } = false;
         private readonly ILogger _logger;
         private readonly IAmazonS3 _client;
@@ -28,6 +29,12 @@ namespace Crowfounding.Services
             IsTest = isTest;
             _logger = logger;
             _client = client;
+            DomainPath = string.Format("http://{0}.{1}.{2}.{3}/", 
+                bucketName, 
+                _client.Config.RegionEndpointServiceName, 
+                _client.Config.RegionEndpoint.SystemName, 
+                _client.Config.RegionEndpoint.PartitionDnsSuffix);
+
             //_client = new AmazonS3Client(@"", @"", RegionEndpoint.EUCentral1);
             //_client = new AmazonS3Client(new BasicAWSCredentials("kek", "lol"), new AmazonS3Config
             //{
@@ -159,8 +166,16 @@ namespace Crowfounding.Services
                 //var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
                 //var user = authState.User;
                 var fileTransferUtility = new TransferUtility(_client);
-                await fileTransferUtility.UploadAsync(stream, BucketName, pathObject);
-                if(pathObject[pathObject.Length-1] == '/')
+                var fileTransferUtilityRequest = new TransferUtilityUploadRequest
+                {
+                    BucketName = BucketName,
+                    InputStream = stream,
+                    StorageClass = S3StorageClass.Standard,
+                    Key = pathObject,
+                    CannedACL = S3CannedACL.PublicRead,
+                };
+                await fileTransferUtility.UploadAsync(fileTransferUtilityRequest);
+                if (pathObject[pathObject.Length-1] == '/')
                     _logger.LogInformation("Uploaded Folder in Bucket: {0}, PathDir: {1}", BucketName, pathObject);
                 else
                     _logger.LogInformation("Uploaded object in Bucket: {0}, PathObject: {1}", BucketName, pathObject);
@@ -230,6 +245,11 @@ namespace Crowfounding.Services
                 _logger.LogError("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
             }
             return urlString;
+        }
+
+        public string GetPublicURL(string filepath, string fileName = null)
+        {
+            return DomainPath + filepath;
         }
 
         public async Task CreateFolderAsync(string newDirPath)
