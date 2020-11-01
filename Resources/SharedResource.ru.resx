@@ -129,6 +129,9 @@
   <data name="Crowdfunding" xml:space="preserve">
     <value>Краудфандинг</value>
   </data>
+  <data name="DateCreate" xml:space="preserve">
+    <value>Дата создания</value>
+  </data>
   <data name="Email" xml:space="preserve">
     <value>Почта</value>
   </data>

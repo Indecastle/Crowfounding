@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Most_Rating_Companies" xml:space="preserve">
-    <value>Наиболее популярные компании</value>
+  <data name="List_of_companies" xml:space="preserve">
+    <value>Список компаний</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Название</value>
@@ -129,8 +129,26 @@
   <data name="Open" xml:space="preserve">
     <value>Открыть</value>
   </data>
-  <data name="Rating" xml:space="preserve">
+  <data name="Table_Create" xml:space="preserve">
+    <value>Дата оконания</value>
+  </data>
+  <data name="Table_End" xml:space="preserve">
+    <value>Дата оконания</value>
+  </data>
+  <data name="Table_Money" xml:space="preserve">
+    <value>Собрано денег</value>
+  </data>
+  <data name="Table_Name" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="Table_NeedMoney" xml:space="preserve">
+    <value>Нужно денег</value>
+  </data>
+  <data name="Table_Rating" xml:space="preserve">
     <value>Рейтинг</value>
+  </data>
+  <data name="Table_Theme" xml:space="preserve">
+    <value>Тема</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Тема</value>

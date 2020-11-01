@@ -24,6 +24,7 @@ using Amazon.S3;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using Crowfounding.BackroundJob;
+using System.Net.Http;
 
 namespace Crowfounding
 {
@@ -40,6 +41,7 @@ namespace Crowfounding
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<HttpClient>();
             services.AddHttpContextAccessor();
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(

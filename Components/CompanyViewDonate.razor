@@ -42,33 +42,6 @@
             </EditForm>
             <br />
         </div>
-        <br>
-        <h3 class="text-center">Yandex</h3>
-        <br>
-        <iframe src="https://money.yandex.ru/quickpay/shop-widget?writer=seller&targets=Donation%20Company&targets-hint=&default-sum=1000&button-text=14&payment-type-choice=on&fio=on&mail=off&hint=&successURL=https%3A%2F%2Flocalhost%3A5001%2F&quickpay=shop&account=410017625025321" width="100%" height="223" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
-        <br>
-        <h3 class="text-center">Scripe</h3>
-        <br>
-        <EditForm Model="_viewModel2" OnValidSubmit="HandleValidSubmit2">
-            <DataAnnotationsValidator />
-            <div class="">
-                <label for="card-element">
-                    Credit or debit card
-                </label>
-                <div id="card-element">
-                    <!-- A Stripe Element will be inserted here. -->
-                </div>
-
-                <!-- Used to display form errors. -->
-                <div id="card-errors" role="alert"></div>
-            </div>
-            <br>
-            <label class="label label-default">Money:</label>
-            <InputNumber aria-label="Amount (to the nearest dollar)" @bind-Value="_viewModel2.Total" />
-            <input class="input-group-text d-inline-block" asp-for="Email" type="email" value="@User.UserName" disabled />
-            <button type="submit" class="btn btn-danger">Submit Payment</button>
-            <ValidationMessage For="@(() => _viewModel2.Total)" />
-        </EditForm>
     }
     else
     {

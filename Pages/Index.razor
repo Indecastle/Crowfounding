@@ -6,30 +6,43 @@
 @inject UserManager<User> _userManager;
 @inject NavigationManager NavigationManager
 @inject IStringLocalizer<Index> L
+@inject HttpClient httpClient
+@using MatBlazor
 
-<h3 class="text-center">@L["Most_Rating_Companies"]</h3>
+<h3 class="text-center">@L["List_of_companies"]</h3>
 <br />
 <body>
     @if (Model?.ToList().Count > 0)
     {
-        <div class="row">
-
-            @foreach (var company in Model.OrderByDescending(s => s.Rating))
-            {
-                <div class="col-sm-6 col-md-4 my-grid">
-                    <div class="img-thumbnail text-center">
-                        <div class="grid-div-image"><img src="@company.MainImage" class="grid-image" /></div>
-                        <div class="caption">
-                            <h3>@L["Name"]: @company.Name</h3>
-                            <h4>@L["Theme"]: @company.Theme</h4>
-                            <h5>@L["Rating"]: @company.Rating</h5>
-                            <p><NavLink class="btn btn-primary" href="@("CompanyView/"+company.Id)">@L["Open"]</NavLink></p>
+        <MatTable Items="@sortedData" class="mat-elevation-z5" ShowPaging="true" UseSortHeaderRow="true" Striped="true" FilterByColumnName="Name">
+            <MatTableHeader>
+                <MatSortHeaderRow SortChanged="@SortData">
+                    <MatSortHeader SortId="name">@L["Table_Name"]</MatSortHeader>
+                    <MatSortHeader SortId="rating">@L["Table_Rating"]</MatSortHeader>
+                    <MatSortHeader SortId="theme">@L["Table_Theme"]</MatSortHeader>
+                    <MatSortHeader SortId="dateCreate">@L["Table_Create"]</MatSortHeader>
+                    <MatSortHeader SortId="dateEnd">@L["Table_End"]</MatSortHeader>
+                    <MatSortHeader SortId="money">@L["Table_Money"]</MatSortHeader>
+                    <MatSortHeader SortId="needMoney">@L["Table_NeedMoney"]</MatSortHeader>
+                </MatSortHeaderRow>
+            </MatTableHeader>
+            <MatTableRow>
+                <td>
+                    <div class="media">
+                        <img src="@context.MainImage" class="mr-3 rounded-lg mw-35" alt="...">
+                        <div class="media-body">
+                            <h4 class="mt-0"><NavLink href='@($"CompanyView/{context.Id}")'>@context.Name</NavLink></h4>
                         </div>
                     </div>
-                </div>
-            }
-
-        </div>
+                </td>
+                <td>@context.Rating</td>
+                <td>@context.Theme</td>
+                <td>@context.DataCreate.ToShortDateString()</td>
+                <td>@context.End.ToShortDateString()</td>
+                <td>@context.CurrentMoney</td>
+                <td>@context.NeedMoney</td>
+            </MatTableRow>
+        </MatTable>
     }
     else
     {
@@ -40,7 +53,7 @@
 
 @code {
     public IEnumerable<Company> Model { get; set; }
-
+    Company[] sortedData = null;
 
 
     protected override async Task OnInitializedAsync()
@@ -48,6 +61,7 @@
         await base.OnInitializedAsync();
 
         Model = await _db.Companies.ToListAsync();
+        SortData(null);
     }
 
     public void Dispose()
@@ -65,5 +79,49 @@
     public void RedirectToCompany(Company company)
     {
         NavigationManager.NavigateTo("/" + company.Name);
+    }
+
+    void SortData(MatSortChangedEvent sort)
+    {
+        sortedData = Model.ToArray();
+        if (!(sort == null || sort.Direction == MatSortDirection.None || string.IsNullOrEmpty(sort.SortId)))
+        {
+            Comparison<Company> comparison = null;
+            switch (sort.SortId)
+            {
+                case "name":
+                    comparison = (s1, s2) => string.Compare(s1.Name, s2.Name, StringComparison.InvariantCultureIgnoreCase);
+                    break;
+                case "rating":
+                    comparison = (s1, s2) => s1.Rating.CompareTo(s2.Rating);
+                    break;
+                case "theme":
+                    comparison = (s1, s2) => s1.Theme.CompareTo(s2.Theme);
+                    break;
+                case "dateCreate":
+                    comparison = (s1, s2) => s1.DataCreate.CompareTo(s2.DataCreate);
+                    break;
+                case "dateEnd":
+                    comparison = (s1, s2) => s1.End.CompareTo(s2.End);
+                    break;
+                case "money":
+                    comparison = (s1, s2) => s1.CurrentMoney.CompareTo(s2.CurrentMoney);
+                    break;
+                case "needMoney":
+                    comparison = (s1, s2) => s1.NeedMoney.CompareTo(s2.NeedMoney);
+                    break;
+            }
+            if (comparison != null)
+            {
+                if (sort.Direction == MatSortDirection.Desc)
+                {
+                    Array.Sort(sortedData, (s1, s2) => -1 * comparison(s1, s2));
+                }
+                else
+                {
+                    Array.Sort(sortedData, comparison);
+                }
+            }
+        }
     }
 }

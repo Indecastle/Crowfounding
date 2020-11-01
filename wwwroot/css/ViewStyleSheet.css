@@ -70,3 +70,9 @@
     margin: 10px 0;
     width: 100%;
 }
+
+
+.mw-35 {
+    max-width: 35px;
+    max-height: 35px;
+}

@@ -1,4 +1,5 @@
 ﻿@page "/CompanyManage"
+@using  System.Security.Claims;
 @inject ApplicationDbContext _db;
 @inject AuthenticationStateProvider AuthenticationStateProvider;
 @inject UserManager<User> _userManager;
@@ -17,14 +18,17 @@
         <div class="col-sm-3 my-1">
             <input class="form-control" type="text" name="SearchString" @bind="SearchText" @oninput="(e => FilterFunc(e.Value.ToString()))" />
         </div>
-        <div class="col-auto my-1">
-            <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" id="OnlyMyCheck" @onchange="OnlyMyChange">
-                <label class="form-check-label" for="OnlyMyCheck">
-                    @L["CheckboxOnlyMy"]
-                </label>
+        <AuthorizeView Roles="Admin, SuperAdmin">
+            <div class="col-auto my-1">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="OnlyMyCheck" @onchange="OnlyMyChange">
+                    <label class="form-check-label" for="OnlyMyCheck">
+                        @L["CheckboxOnlyMy"]
+                    </label>
+                </div>
             </div>
-        </div>
+        </AuthorizeView>
+
     </div>
 
     <hr />
@@ -43,6 +47,10 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @{
+                        bool isAdmin = claimUser.IsInRole("Admin");
+                        bool isSuperAdmin = claimUser.IsInRole("SuperAdmin");
+                    }
                     @foreach (var company in CompaniesFilter)
                     {
                         <tr @onclick="(e => RedirectToCompany(company.Id))">
@@ -52,7 +60,7 @@
                             <td>@company.End.ToShortDateString()</td>
                             <td>@company.CurrentMoney</td>
                             <td>@company.NeedMoney</td>
-                            @if (company.UserID == User.Id)
+                            @if (company.UserID == User.Id || isAdmin || isSuperAdmin)
                             {
                                 <td @onclick:stopPropagation>
                                     <NavLink class="btn btn-sm btn-info" href='@($"CreateCompany/edit/{company.Id}")'>@L["Edit"]</NavLink>
@@ -79,13 +87,14 @@
     [Parameter]
     public string SearchText { get; set; }
     public List<Company> CompaniesFilter { get; set; }
+    private ClaimsPrincipal claimUser;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var claimUser = authState.User;
+        claimUser = authState.User;
         User = await _userManager.GetUserAsync(claimUser);
 
         Companies = _db.Companies.Where(c => c.UserID == User.Id).ToList();
