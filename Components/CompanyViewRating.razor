@@ -35,7 +35,7 @@
     @foreach (var rating in RatingsInViewModel)
     {
         <div class="container">
-            <p class="text-left">@User.UserName</p>
+            <p class="text-left">@rating.User.UserName</p>
             <p class="text-left">@rating.CompanyRating</p>
             <span class="text-left">@rating.When.ToString()</span>
         </div>
@@ -86,7 +86,7 @@
     {
         if (User != null)
             Rating = _db.Ratings.FirstOrDefault(o => o.UserId == User.Id && o.CompanyId == LocalCompany.Id);
-        RatingsInViewModel = _db.Ratings.Where(c => c.CompanyId == LocalCompany.Id).Take(20).ToList();
+        RatingsInViewModel = _db.Ratings.Include(c => c.User).Where(c => c.CompanyId == LocalCompany.Id).Take(20).ToList();
         await InvokeAsync(StateHasChanged);
     }
 

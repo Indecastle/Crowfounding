@@ -91,7 +91,6 @@ namespace Crowfounding
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<User>>();
-            services.AddSingleton<WeatherForecastService>();
             services.AddScoped<ThemeService>();
             services.AddHostedService<TimedHostedService>();
             
