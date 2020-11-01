@@ -58,6 +58,16 @@ namespace Crowfounding.Data
                 .WithMany(d => d.Ratings)
                 .HasForeignKey(d => d.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Transaction>()
+                .HasOne(a => a.User)
+                .WithMany(d => d.Transactions)
+                .HasForeignKey(d => d.UserId);
+
+            builder.Entity<Transaction>()
+                .HasOne(a => a.Company)
+                .WithMany(d => d.Transactions)
+                .HasForeignKey(d => d.CompanyId);
         }
 
         public DbSet<User> User { get; set; }

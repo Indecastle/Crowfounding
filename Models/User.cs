@@ -21,6 +21,7 @@ namespace Crowfounding.Models
         public virtual ICollection<Donation> Donations { get; set; }
 
         public virtual ICollection<Rating> Ratings { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
 
     }
 }

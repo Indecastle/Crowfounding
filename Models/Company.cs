@@ -50,6 +50,7 @@ namespace Crowfounding.Models
         public virtual User Owner { get; set; }
         public virtual ICollection<Rating> Ratings { get; set; }
         public virtual ICollection<Donation> Donations { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
 
 
         public event Action<Comment, object> Sent;
