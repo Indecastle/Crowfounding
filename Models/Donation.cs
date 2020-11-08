@@ -8,7 +8,7 @@ namespace Crowfounding.Models
     public class Donation
     {
         public int Id { get; set; }
-        public int MonyDonate { get; set; }
+        public decimal MonyDonate { get; set; }
         public string UserId { get; set; }
         public int CompanyId { get; set; }
 

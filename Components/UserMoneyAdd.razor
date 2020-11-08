@@ -1,0 +1,96 @@
+﻿@inject ApplicationDbContext _db;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject UserManager<User> _userManager;
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime;
+@inject IStringLocalizer<Crowfounding.Pages.CompanyPages.CompanyView> L
+@using System.ComponentModel.DataAnnotations;
+
+@if (User != null)
+{
+    <div class="page-header">
+        <h3>@L["UserFinance_Title"] </h3>
+    </div>
+    <br>
+        <h3 class="text-center">@L["User_Money"]</h3>
+        <div class="col-md-8"><h5>@L["User_Money"] @User.Money</h5></div>
+        <br>
+        <div class="row">
+            <EditForm Model="_viewModel" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-row align-items-center">
+                    <div class="col-auto">
+                        <label class="sr-only" for="inlineFormInputGroup">Donate2</label>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">$</div>
+                            </div>
+                            <InputNumber class="form-control" id="inlineFormInputGroup" placeholder="Donate" @bind-Value="_viewModel.MonyDonate" />
+                            <div class="input-group-append">
+                                <div class="input-group-text">.00</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary mb-2">Donate</button>
+                    </div>
+                </div>
+
+            </EditForm>
+            <br />
+        </div>
+}
+
+
+@code {
+    [Parameter]
+    public User User { get; set; }
+    public DonateViewModel _viewModel = new DonateViewModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await JsRuntime.InvokeVoidAsync("initCompanyViewDonate");
+            }
+            catch (JSException)
+            {
+            }
+
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        User.Money += _viewModel.MonyDonate;
+        Transaction transaction = new Transaction {
+            CompanyId = null,
+            UserId = User.Id,
+            Amount = _viewModel.MonyDonate,
+            When = DateTime.Now,
+            Type = TransactionType.User
+        };
+        await _db.Transactions.AddAsync(transaction);
+        await _db.SaveChangesAsync();
+    }
+
+    private async Task HandleValidSubmit2()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    public class DonateViewModel
+    {
+        [Required]
+        [Range(10, 100000, ErrorMessage = "10-100000 $")]
+        public decimal MonyDonate { get; set; }
+    }
+}

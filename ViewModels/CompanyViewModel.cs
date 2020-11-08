@@ -30,7 +30,7 @@ namespace Crowfounding.ViewModels
         [Required]
         [Display(Name = "Need Money")]
         [Range(10, 100000, ErrorMessage = "Accommodation invalid (10-100000).")]
-        public int NeedMoney { get; set; }
+        public decimal NeedMoney { get; set; }
 
         [Required]
         [Display(Name = "URL")]

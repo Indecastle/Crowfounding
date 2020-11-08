@@ -31,9 +31,10 @@ namespace Crowfounding.Models
         public int AllRating { get; set; }
         public int NumberUsers { get; set; }
         public double Rating { get; set; }
-        public int CurrentMoney { get; set; }
         [Required]
-        public int NeedMoney { get; set; }
+        public decimal CurrentMoney { get; set; }
+        [Required]
+        public decimal NeedMoney { get; set; }
         public string URLVideo { get; set; }
         public DateTime LastEdit { get; set; }
         public DateTime DataCreate { get; set; }

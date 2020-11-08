@@ -29,7 +29,7 @@
     public int? CompanyId { get; set; } = null;
 
     public int prosent;
-    public double money;
+    public decimal money;
 
 
 
@@ -44,7 +44,7 @@
         if (LocalCompany == null || LocalCompany.IsEnd == false || LocalCompany.UserID != User.Id)
             RedirectToHome();
 
-        money = LocalCompany.CurrentMoney * 0.9;
+        money = LocalCompany.CurrentMoney * 0.9M;
         prosent = 10;
     }
 

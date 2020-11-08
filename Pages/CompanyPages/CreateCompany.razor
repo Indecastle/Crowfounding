@@ -50,7 +50,7 @@
                 </div>
                 <InputNumber class="form-control" aria-label="Amount (to the nearest dollar)" id="NeedMoneyid" @bind-Value="_viewModel.NeedMoney" />
                 <div class="input-group-append">
-                    <div class="input-group-text">.00</div>
+                    <div class="input-group-text">$</div>
                 </div>
             </div>
             <ValidationMessage For="@(() => _viewModel.NeedMoney)" />

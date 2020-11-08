@@ -1,0 +1,27 @@
+﻿@page "/FinanceManage"
+@using System.Security.Claims
+@inject ApplicationDbContext _db;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject UserManager<User> _userManager;
+@inject NavigationManager NavigationManager
+@inject IStringLocalizer<FinanceManage> L
+
+@if (User != null)
+{
+    <UserMoneyAdd User="User" />
+}
+
+@code {
+    [Parameter]
+    public User User { get; set; }
+    private ClaimsPrincipal claimUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        claimUser = authState.User;
+        User = await _userManager.GetUserAsync(claimUser);
+    }
+}

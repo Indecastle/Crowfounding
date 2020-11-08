@@ -4,14 +4,16 @@ using Crowfounding.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Crowfounding.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201108183100_FixTypeOfMoneyForUser")]
+    partial class FixTypeOfMoneyForUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,8 +69,8 @@ namespace Crowfounding.Migrations
                     b.Property<int>("AllRating")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("CurrentMoney")
-                        .HasColumnType("decimal(18,4)");
+                    b.Property<int>("CurrentMoney")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DataCreate")
                         .HasColumnType("datetime2");
@@ -96,8 +98,8 @@ namespace Crowfounding.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("NeedMoney")
-                        .HasColumnType("decimal(18,4)");
+                    b.Property<int>("NeedMoney")
+                        .HasColumnType("int");
 
                     b.Property<int>("NumberUsers")
                         .HasColumnType("int");
@@ -205,7 +207,7 @@ namespace Crowfounding.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<int?>("CompanyId")
+                    b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<byte>("Type")
@@ -499,7 +501,9 @@ namespace Crowfounding.Migrations
                 {
                     b.HasOne("Crowfounding.Models.Company", "Company")
                         .WithMany("Transactions")
-                        .HasForeignKey("CompanyId");
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Crowfounding.Models.User", "User")
                         .WithMany("Transactions")
