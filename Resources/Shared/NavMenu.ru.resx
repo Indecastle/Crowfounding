@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Company Manage" xml:space="preserve">
-    <value>Менеджер компаний</value>
+    <value>Управление компаниями</value>
   </data>
   <data name="Counter" xml:space="preserve">
     <value>Счётчик</value>
@@ -129,13 +129,16 @@
   <data name="Fetch data" xml:space="preserve">
     <value>Погода</value>
   </data>
+  <data name="Finance Manage" xml:space="preserve">
+    <value>Финансы</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Домой</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Настройки</value>
   </data>
-  <data name="UserManager" xml:space="preserve">
-    <value>Менеджер пользователей</value>
+  <data name="User Manage" xml:space="preserve">
+    <value>Управление пользователями</value>
   </data>
 </root>

@@ -117,28 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Company Manage" xml:space="preserve">
-    <value>Company manage</value>
+  <data name="Donate" xml:space="preserve">
+    <value>донат</value>
   </data>
-  <data name="Counter" xml:space="preserve">
-    <value>Counter</value>
+  <data name="UserFinance_Title" xml:space="preserve">
+    <value>Финансы</value>
   </data>
-  <data name="Crowfounding" xml:space="preserve">
-    <value>Crowfounding</value>
-  </data>
-  <data name="Fetch data" xml:space="preserve">
-    <value>Fetch data</value>
-  </data>
-  <data name="Finance Manage" xml:space="preserve">
-    <value>Finance manage</value>
-  </data>
-  <data name="Home" xml:space="preserve">
-    <value>Home</value>
-  </data>
-  <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
-  </data>
-  <data name="User Manage" xml:space="preserve">
-    <value>User manage</value>
+  <data name="User_Money" xml:space="preserve">
+    <value>Деньги</value>
   </data>
 </root>

@@ -5,22 +5,26 @@
 @inject IHttpContextAccessor _httpContext;
 @inject IStringLocalizer<ChangeCulture> L
 
-<h3>@L["Select_your_language"]</h3>
+<h3>@L["Settings"]</h3>
 
-<select @onchange="OnSelected" value="@Lang">
-    <option disabled hidden>Select Language...</option>
-    <option value="en">English</option>
-    <option value="ru">Russian</option>
-</select>
-
-<select @onchange="OnSelectedTheme" value="@Theme">
-    <option disabled hidden>Select Theme...</option>
-    <option value="Original">Original</option>
-    <option value="Black">Black</option>
-</select>
-
-<br />
-(@Lang)
+<form>
+    <div class="form-group">
+        <label for="form_language">@L["Language"]</label>
+        <select class="form-control" @onchange="OnSelected" value="@Lang" id="form_language">
+            <option disabled hidden>@L["Select_your_language"]</option>
+            <option value="en">@L["Language_english"]</option>
+            <option value="ru">@L["Language_russian"]</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="form_theme">@L["Theme"]</label>
+        <select class="form-control" @onchange="OnSelectedTheme" value="@Theme" id="form_theme">
+            <option disabled hidden>@L["Select_your_theme"]</option>
+            <option value="Original">@L["Theme_original"]</option>
+            <option value="Black">@L["Theme_black"]</option>
+        </select>
+    </div>
+</form>
 
 @code {
     public string Theme;

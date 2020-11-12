@@ -3,7 +3,7 @@
 @inject UserManager<User> _userManager;
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime;
-@inject IStringLocalizer<Crowfounding.Pages.CompanyPages.CompanyView> L
+@inject IStringLocalizer<UserMoneyAdd> L
 @using System.ComponentModel.DataAnnotations;
 
 @if (User != null)
@@ -13,7 +13,7 @@
     </div>
     <br>
         <h3 class="text-center">@L["User_Money"]</h3>
-        <div class="col-md-8"><h5>@L["User_Money"] @User.Money</h5></div>
+        <div class="col-md-8"><h5>@L["User_Money"] @UiUtil.FormatDecimal(User.Money) $</h5></div>
         <br>
         <div class="row">
             <EditForm Model="_viewModel" OnValidSubmit="HandleValidSubmit">
@@ -27,13 +27,10 @@
                                 <div class="input-group-text">$</div>
                             </div>
                             <InputNumber class="form-control" id="inlineFormInputGroup" placeholder="Donate" @bind-Value="_viewModel.MonyDonate" />
-                            <div class="input-group-append">
-                                <div class="input-group-text">.00</div>
-                            </div>
                         </div>
                     </div>
                     <div class="col-auto">
-                        <button type="submit" class="btn btn-primary mb-2">Donate</button>
+                        <button type="submit" class="btn btn-primary mb-2">@L["Donate"]</button>
                     </div>
                 </div>
 
@@ -47,6 +44,8 @@
     [Parameter]
     public User User { get; set; }
     public DonateViewModel _viewModel = new DonateViewModel();
+    private bool locker = true;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,16 +69,22 @@
 
     private async Task HandleValidSubmit()
     {
-        User.Money += _viewModel.MonyDonate;
-        Transaction transaction = new Transaction {
-            CompanyId = null,
-            UserId = User.Id,
-            Amount = _viewModel.MonyDonate,
-            When = DateTime.Now,
-            Type = TransactionType.User
-        };
-        await _db.Transactions.AddAsync(transaction);
-        await _db.SaveChangesAsync();
+        if (locker)
+        {
+            locker = false;
+            User.Money += _viewModel.MonyDonate;
+            Transaction transaction = new Transaction
+            {
+                CompanyId = null,
+                UserId = User.Id,
+                Amount = _viewModel.MonyDonate,
+                When = DateTime.Now,
+                Type = TransactionType.User
+            };
+            await _db.Transactions.AddAsync(transaction);
+            await _db.SaveChangesAsync();
+            locker = true;
+        }
     }
 
     private async Task HandleValidSubmit2()
