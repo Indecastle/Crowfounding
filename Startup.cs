@@ -1,14 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +20,8 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using Crowfounding.BackroundJob;
 using System.Net.Http;
+using MatBlazor;
+using Crowfounding.Services.Finances;
 
 namespace Crowfounding
 {
@@ -125,6 +122,20 @@ namespace Crowfounding
 
             services.AddSingleton<CommentService>();
             services.AddScoped<SingleCommentService>();
+            services.AddScoped<IFinanceService, FinanceService>();
+            services.AddMatToaster(config =>
+            {
+                config.Position = MatToastPosition.TopCenter;
+                config.PreventDuplicates = false;
+                config.NewestOnTop = true;
+                config.ShowCloseButton = true;
+                config.ShowProgressBar = true;
+                config.MaximumOpacity = 95;
+                config.ShowTransitionDuration = 500;
+                config.VisibleStateDuration = 5000;
+                config.HideTransitionDuration = 500;
+                config.RequireInteraction = false;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

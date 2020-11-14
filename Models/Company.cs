@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Crowfounding.Models.Finance;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -52,6 +53,8 @@ namespace Crowfounding.Models
         public virtual ICollection<Rating> Ratings { get; set; }
         public virtual ICollection<Donation> Donations { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<TotalDonate> TotalDonates { get; set; }
+        public virtual ICollection<Bonuse> Bonuses { get; set; }
 
 
         public event Action<Comment, object> Sent;

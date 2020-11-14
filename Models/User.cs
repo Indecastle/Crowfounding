@@ -1,4 +1,5 @@
-﻿using Crowfounding.Services;
+﻿using Crowfounding.Models.Finance;
+using Crowfounding.Services;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ namespace Crowfounding.Models
         public virtual ICollection<Rating> Ratings { get; set; }
 
         public virtual ICollection<Transaction> Transactions { get; set; }
+
+        public virtual ICollection<TotalDonate> TotalDonates { get; set; }
 
         public decimal Money { get; set; }
 

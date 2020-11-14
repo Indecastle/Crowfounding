@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Crowfounding.Models;
+using Crowfounding.Models.Finance;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -81,6 +82,29 @@ namespace Crowfounding.Data
             builder.Entity<Transaction>()
                 .Property(t => t.Amount)
                 .HasColumnType("decimal(18,4)");
+
+            builder.Entity<TotalDonate>()
+                .HasOne(a => a.User)
+                .WithMany(d => d.TotalDonates)
+                .HasForeignKey(d => d.UserId);
+            builder.Entity<TotalDonate>()
+                .HasOne(a => a.Company)
+                .WithMany(d => d.TotalDonates)
+                .HasForeignKey(d => d.CompanyId);
+            builder.Entity<TotalDonate>()
+                .Property(x => x.Id)
+                .HasDefaultValueSql("NEWID()");
+            builder.Entity<TotalDonate>()
+                .Property(t => t.Amount)
+                .HasColumnType("decimal(18,4)");
+
+            builder.Entity<Bonuse>()
+                .HasOne(a => a.Company)
+                .WithMany(d => d.Bonuses)
+                .HasForeignKey(d => d.CompanyId);
+            builder.Entity<Bonuse>()
+                .Property(t => t.NeedAmount)
+                .HasColumnType("decimal(18,4)");
         }
 
         public DbSet<User> User { get; set; }
@@ -90,5 +114,7 @@ namespace Crowfounding.Data
         public DbSet<ImagesCompany> CompanyImages { get; set; }
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<TotalDonate> TotalDonates { get; set; }
+        public DbSet<Bonuse> Bonuses { get; set; }
     }
 }

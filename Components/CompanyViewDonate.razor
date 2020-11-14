@@ -3,6 +3,8 @@
 @inject UserManager<User> _userManager;
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime;
+@inject IMatToaster Toaster
+@inject IFinanceService _financeService
 @inject IStringLocalizer<Crowfounding.Pages.CompanyPages.CompanyView> L
 @using System.ComponentModel.DataAnnotations;
 
@@ -14,8 +16,8 @@
     <br>
     @if (!Model.IsEnd)
     {
-<h3 class="text-center">@L["Donate_Money"]</h3>
-        <div class="col-md-8"><h5>@L["Donate_Money"] @Model.CurrentMoney / @Model.NeedMoney</h5></div>
+        <h3 class="text-center">@L["Donate_Money"]</h3>
+        <div class="col-md-8"><h5>@L["Donate_Money"] @UiUtil.FormatDecimal(Model.CurrentMoney)$ / @UiUtil.FormatDecimal(Model.NeedMoney)$</h5></div>
         <br>
         <div class="row">
             <EditForm Model="_viewModel" OnValidSubmit="HandleValidSubmit">
@@ -25,20 +27,18 @@
                     <div class="col-auto">
                         <label class="sr-only" for="inlineFormInputGroup">Donate2</label>
                         <div class="input-group mb-2">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">$</div>
-                            </div>
-                            <InputNumber class="form-control" id="inlineFormInputGroup" placeholder="Donate" @bind-Value="_viewModel.MonyDonate" />
-                            <div class="input-group-append">
-                                <div class="input-group-text">.00</div>
-                            </div>
+                            <MatNumericUpDownField Label="Currency"
+                                                   @bind-Value=_viewModel.MonyDonate
+                                                   FieldType="MatNumericUpDownFieldType.Numeric"
+                                                   DecimalPlaces=2>
+                            </MatNumericUpDownField>
                         </div>
                     </div>
                     <div class="col-auto">
-                        <button type="submit" class="btn btn-primary mb-2">Donate</button>
+                        <MatButton Type="submit" Raised="false">@L["Donate"]</MatButton>
                     </div>
                 </div>
-                
+
             </EditForm>
             <br />
         </div>
@@ -57,10 +57,13 @@
     public User User { get; set; }
     public DonateViewModel _viewModel = new DonateViewModel();
     public DonateViewModel2 _viewModel2 = new DonateViewModel2();
+    private bool locker = true;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        Toaster.Configuration.Position = MatToastPosition.TopCenter;
+        Toaster.Configuration.PreventDuplicates = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -80,10 +83,18 @@
 
     private async Task HandleValidSubmit()
     {
-        Model.CurrentMoney += _viewModel.MonyDonate;
-        Donation donation = new Donation { CompanyId = Model.Id, UserId = User.Id, MonyDonate = _viewModel.MonyDonate };
-        await _db.Donations.AddAsync(donation);
-        await _db.SaveChangesAsync();
+        if (locker)
+        {
+            if (User.Money < _viewModel.MonyDonate)
+            {
+                Show(L["No_money"], "", MatToastType.Danger, "accessible");
+                return;
+            }
+
+            locker = false;
+            await _financeService.DonateToCompany(User, Model, _viewModel.MonyDonate);
+            locker = true;
+        }
     }
 
     private async Task HandleValidSubmit2()
@@ -95,13 +106,38 @@
     {
         [Required]
         [Range(10, 100000, ErrorMessage = "10-100000 $")]
-        public int MonyDonate { get; set; }
+        public decimal MonyDonate { get; set; }
     }
 
     public class DonateViewModel2
     {
         [Required]
         [Range(10, 100000, ErrorMessage = "10-100000 $")]
-        public int Total { get; set; }
+        public decimal Total { get; set; }
+    }
+
+    public void Show(string message, string title, MatToastType type, string icon = "")
+    {
+        Toaster.Add(message, type, title, icon, config =>
+        {
+            config.ShowCloseButton = true;
+            config.ShowProgressBar = true;
+            config.MaximumOpacity = 100;
+
+            config.ShowTransitionDuration = 500;
+            config.VisibleStateDuration = 5000;
+            config.HideTransitionDuration = 500;
+
+            config.RequireInteraction = false;
+
+            if (false)
+            {
+                config.Onclick = toast =>
+                {
+                    Console.WriteLine($"Title: \"{toast.Title}\"; message: \"{toast.Message}\"; Type: {toast.Options.Type}");
+                    return Task.CompletedTask;
+                };
+            }
+        });
     }
 }
