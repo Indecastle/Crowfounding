@@ -48,5 +48,70 @@ namespace Crowfounding.ViewModels
 
         public string MainImage { get; set; }
         public List<string> Images { get; set; }
+
+        public List<BonuseViewModel> Bonuses { get; set; } = new List<BonuseViewModel>();
+
+        public void UpdateData(Company editCompany)
+        {
+            Name = editCompany.Name;
+            NeedMoney = editCompany.NeedMoney;
+            Theme = editCompany.Theme;
+            URLVideo = editCompany.URLVideo;
+            Description = editCompany.Description;
+            End = editCompany.End;
+            MainImage = editCompany.MainImage;
+            Images = editCompany.CompanyImages?.Select(ci => ci.PhotoPath).ToList();
+            isLoadedMainImage = true;
+            isLoadedCompanyImages = true;
+
+            Bonuses = editCompany.Bonuses.Select(b => new BonuseViewModel(b)).ToList();
+        }
+    }
+
+    public class BonuseViewModel
+    {
+        public Bonuse bonuse;
+
+        public BonuseViewModel(Bonuse bonuse)
+        {
+            this.bonuse = bonuse;
+
+            NeedAmount = bonuse.NeedAmount;
+            Title = bonuse.Title;
+            Description = bonuse.Description;
+            Definition = bonuse.Definition;
+        }
+
+        public decimal NeedAmount { get; set; }
+
+        [Required]
+        public string Title { get; set; }
+
+        [Required]
+        public string Description { get; set; }
+
+        public string Definition { get; set; }
+
+        public bool IsExpanded { get; set; }
+
+        public Bonuse GetUpdatedBonuse()
+        {
+            if (bonuse == null)
+            {
+                bonuse = new Bonuse();
+            }
+            UpdateBonuse();
+
+            return bonuse;
+        }
+
+        public void UpdateBonuse()
+        {
+            bonuse.NeedAmount = NeedAmount;
+            bonuse.Title = Title;
+            bonuse.Description = Description;
+            bonuse.Definition = Definition;
+
+        }
     }
 }

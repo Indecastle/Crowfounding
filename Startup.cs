@@ -123,6 +123,7 @@ namespace Crowfounding
             services.AddSingleton<CommentService>();
             services.AddScoped<SingleCommentService>();
             services.AddScoped<IFinanceService, FinanceService>();
+            services.AddScoped<ICompanyService, CompanyService>();
             services.AddMatToaster(config =>
             {
                 config.Position = MatToastPosition.TopCenter;

@@ -6,6 +6,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider;
 @inject UserManager<User> _userManager;
 @inject NavigationManager NavigationManager
+@inject ICompanyService _companyService
 @inject IStringLocalizer<CreateCompany> L
 @attribute [Authorize]
     <h2>@(isEditing ? "EditCompany" : "CreateCompany")</h2>
@@ -76,6 +77,52 @@
             </div>
         </div>
 
+        <div class="border-top pb-3">
+            <MatAccordion>
+                <MatExpansionPanel>
+                    <MatExpansionPanelSummary>
+                        <MatExpansionPanelHeader>Bonuses</MatExpansionPanelHeader>
+                        <MatExpansionPanelSubHeader>Type your name and age</MatExpansionPanelSubHeader>
+                    </MatExpansionPanelSummary>
+                    <MatExpansionPanelDetails>
+                        <div @onclick:stopPropagation="true"
+                             @onclick:preventDefault="true"
+                             @onmousedown:stopPropagation="true"
+                             @onmousedown:preventDefault="true">
+                            <MatButton OnClick="@AddBonuse" Label="Create bonuse"></MatButton>
+                        </div>
+                        <MatAccordion>
+                            @foreach (var bonuseVm in _viewModel.Bonuses)
+                            {
+                                <MatExpansionPanel>
+                                    <MatExpansionPanelSummary>
+                                        <MatExpansionPanelHeader Style="white-space: nowrap; overflow-x: hidden; ">@bonuseVm.Title</MatExpansionPanelHeader>
+                                    </MatExpansionPanelSummary>
+                                    <MatExpansionPanelDetails>
+                                        <MatTextField @bind-Value="@bonuseVm.Title" Label="Title" FullWidth="true"></MatTextField>
+                                        <MatTextField @bind-Value="@bonuseVm.Definition" Label="Definition" TextArea="true" FullWidth="true"></MatTextField>
+                                        <MatTextField @bind-Value="@bonuseVm.Description" Label="Description" TextArea="true" FullWidth="true"></MatTextField>
+                                        <MatNumericUpDownField Label="Need Amount"
+                                                               @bind-Value=bonuseVm.NeedAmount
+                                                               FieldType="MatNumericUpDownFieldType.Numeric"
+                                                               DecimalPlaces=2>
+                                        </MatNumericUpDownField>
+                                        <div @onclick:stopPropagation="true" 
+                                             @onclick:preventDefault="true" 
+                                             @onsubmit:stopPropagation="true" 
+                                             @onsubmit:preventDefault="true">
+                                            <MatButton Class="d-inline" Icon="delete" OnClick="@(() => RemoveBonuse(bonuseVm))" Label="Delete"></MatButton>
+                                        </div>
+                                    </MatExpansionPanelDetails>
+                                </MatExpansionPanel>
+                            }
+                        </MatAccordion>
+                    </MatExpansionPanelDetails>
+                </MatExpansionPanel>
+            </MatAccordion>
+                
+        </div>
+        
         <div>
             <input class="btn btn-primary" type="submit" value="@(isEditing ? "Edit" : "Create")" />
         </div>
@@ -87,7 +134,10 @@
     public int? CompanyId { get; set; } = null;
     public bool isEditing;
 
-    private CompanyViewModel _viewModel = new CompanyViewModel { Theme = Theme.Education, isLoadedCompanyImages = true };
+    private CompanyViewModel _viewModel = new CompanyViewModel {
+        Theme = Theme.Education,
+        isLoadedCompanyImages = true
+    };
     private EditContext _editContext;
     private Company EditCompany;
     private IFileListEntry MainImage { get; set; }
@@ -98,21 +148,15 @@
         await base.OnInitializedAsync();
 
         if (CompanyId != null)
-            EditCompany = _db.Companies.Include(c => c.CompanyImages).FirstOrDefault(c => c.Id == CompanyId);
+            EditCompany = _db.Companies
+                .Include(c => c.CompanyImages)
+                .Include(c => c.Bonuses)
+                .SingleOrDefault(c => c.Id == CompanyId);
 
         if (EditCompany != null)
         {
             isEditing = true;
-            _viewModel.Name = EditCompany.Name;
-            _viewModel.NeedMoney = EditCompany.NeedMoney;
-            _viewModel.Theme = EditCompany.Theme;
-            _viewModel.URLVideo = EditCompany.URLVideo;
-            _viewModel.Description = EditCompany.Description;
-            _viewModel.End = EditCompany.End;
-            _viewModel.MainImage = EditCompany.MainImage;
-            _viewModel.Images = EditCompany.CompanyImages?.Select(ci => ci.PhotoPath).ToList();
-            _viewModel.isLoadedMainImage = true;
-            _viewModel.isLoadedCompanyImages = true;
+            _viewModel.UpdateData(EditCompany);
         }
 
         _editContext = new EditContext(_viewModel);
@@ -122,47 +166,12 @@
     {
         if (isEditing)
         {
-            EditCompany.Name = _viewModel.Name;
-            EditCompany.NeedMoney = _viewModel.NeedMoney;
-            EditCompany.Theme = _viewModel.Theme;
-            EditCompany.URLVideo = _viewModel.URLVideo;
-            EditCompany.Description = _viewModel.Description;
-            EditCompany.End = _viewModel.End;
-            EditCompany.MainImage = _viewModel.MainImage;
-            EditCompany.CompanyImages = _viewModel.Images.Select(imgUrl => new ImagesCompany { PhotoPath = imgUrl }).ToList();
-
-            EditCompany.IsEnd = EditCompany.End < DateTime.Now;
+            await _companyService.EditCompany(EditCompany, _viewModel);
         }
         else
         {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var claimUser = authState.User;
-            var owner = await _userManager.GetUserAsync(claimUser);
-            Company company = new Company
-            {
-                Name = _viewModel.Name,
-                Theme = _viewModel.Theme,
-                End = _viewModel.End,
-                NumberUsers = 0,
-                Rating = 0,
-                Description = _viewModel.Description,
-                CurrentMoney = 0,
-                NeedMoney = _viewModel.NeedMoney,
-                URLVideo = _viewModel.URLVideo,
-                DataCreate = DateTime.Now,
-                LastEdit = DateTime.MinValue,
-                EndAtNextDay = false,
-                IsEnd = false,
-                UserID = owner.Id,
-                MainImage = _viewModel.MainImage
-            };
-            if (_viewModel.Images != null)
-            {
-                company.CompanyImages = _viewModel.Images.Select(imgUrl => new ImagesCompany { PhotoPath = imgUrl }).ToList();
-            }
-            await _db.Companies.AddAsync(company);
+            await _companyService.CreateCompany(_viewModel);
         }
-        await _db.SaveChangesAsync();
         Console.WriteLine("OnValidSubmit @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         NavigationManager.NavigateTo("/");
     }
@@ -218,5 +227,25 @@
             StateHasChanged();
             Console.WriteLine("Images Loaded ------------------------------");
         }
+    }
+
+    public void AddBonuse()
+    {
+        var bonuse = new Bonuse();
+        _viewModel.Bonuses.Add(new BonuseViewModel(bonuse));
+        if (isEditing)
+        {
+            EditCompany.Bonuses.Add(bonuse);
+        }
+    }
+
+    public void RemoveBonuse(BonuseViewModel bonuseVm)
+    {
+        _viewModel.Bonuses.Remove(bonuseVm);
+        if (isEditing)
+        {
+            EditCompany.Bonuses.Remove(bonuseVm.bonuse);
+        }
+        StateHasChanged();
     }
 }
