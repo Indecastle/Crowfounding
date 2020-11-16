@@ -9,6 +9,8 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Crowfounding.Models.Finance;
+using Microsoft.EntityFrameworkCore;
 
 namespace Crowfounding.BackroundJob
 {
@@ -16,6 +18,7 @@ namespace Crowfounding.BackroundJob
     {
         private readonly ILogger _logger;
         private Timer _timer;
+        private Timer _timer_UserBonuses;
         private readonly IServiceScopeFactory _scopeFactory;
         
 
@@ -29,8 +32,8 @@ namespace Crowfounding.BackroundJob
         {
             _logger.LogInformation("Timed Background Service is starting.");
 
-            _timer = new Timer(DoWork, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(5));
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
+            _timer_UserBonuses = new Timer(DoWork_UserBonuses, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
 
             return Task.CompletedTask;
         }
@@ -50,12 +53,45 @@ namespace Crowfounding.BackroundJob
                 _context.SaveChanges();
             }
         }
+        
+        private void DoWork_UserBonuses(object state)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                DateTime dateNow = DateTime.Now;
+                foreach(TotalDonate totalDonate in _context.TotalDonates
+                    .Include(td => td.User)
+                    .Include(td => td.Company.UserBonuses)
+                    .Include(td => td.Company.Bonuses))
+                {
+                    foreach (var bonuse in totalDonate.Company.Bonuses)
+                    {
+                        if (!totalDonate.Company.UserBonuses.Any(ub => 
+                                ub.BonuseId == bonuse.Id && ub.UserId == totalDonate.UserId)
+                            && totalDonate.Amount > bonuse.NeedAmount)
+                        {
+                            _context.UserBonuses.Add(new UserBonuse
+                            {
+                                BonuseId = bonuse.Id,
+                                CompanyId = totalDonate.CompanyId,
+                                UserId = totalDonate.UserId,
+                                CreateAt = dateNow
+                            });
+                            _logger.LogInformation($"User Get Bonuse '{bonuse.Title}' with {bonuse.NeedAmount}$ is ended");
+                        }
+                    }
+                }
+                _context.SaveChanges();
+            }
+        }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Timed Background Service is stopping.");
 
             _timer?.Change(Timeout.Infinite, 0);
+            _timer_UserBonuses?.Change(Timeout.Infinite, 0);
 
             return Task.CompletedTask;
         }
@@ -63,6 +99,7 @@ namespace Crowfounding.BackroundJob
         public void Dispose()
         {
             _timer?.Dispose();
+            _timer_UserBonuses?.Dispose();
         }
     }
 }

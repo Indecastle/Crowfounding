@@ -105,6 +105,22 @@ namespace Crowfounding.Data
             builder.Entity<Bonuse>()
                 .Property(t => t.NeedAmount)
                 .HasColumnType("decimal(18,4)");
+            
+            builder.Entity<UserBonuse>()
+                .HasOne(a => a.Bonuse)
+                .WithMany(a => a.UserBonuses)
+                .HasForeignKey(d => d.BonuseId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<UserBonuse>()
+                .HasOne(a => a.Company)
+                .WithMany(a => a.UserBonuses)
+                .HasForeignKey(d => d.CompanyId)
+                .OnDelete(DeleteBehavior.NoAction);
+            builder.Entity<UserBonuse>()
+                .HasOne(a => a.User)
+                .WithMany(a => a.UserBonuses)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
         public DbSet<User> User { get; set; }
@@ -116,5 +132,6 @@ namespace Crowfounding.Data
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<TotalDonate> TotalDonates { get; set; }
         public DbSet<Bonuse> Bonuses { get; set; }
+        public DbSet<UserBonuse> UserBonuses { get; set; }
     }
 }
