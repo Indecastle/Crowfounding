@@ -35,6 +35,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>TakeMoneyPage.en.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\Pages\CompanyPages\CreateCompany.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CreateCompany.ru.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Pages\CompanyPages\CreateCompany.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CreateCompany.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -44,6 +54,14 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Pages\TakeMoneyPage.ru.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Pages\CompanyPages\CreateCompany.ru.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CreateCompany.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Pages\CompanyPages\CreateCompany.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CreateCompany.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

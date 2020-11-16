@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Toaster_LoadImages_Message" xml:space="preserve">
+    <value>Images loading completed</value>
+  </data>
+    <data name="Toaster_LoadMainImage_Message" xml:space="preserve">
+    <value>Main Image loading completed</value>
+  </data>
+    <data name="Toaster_LoadImage_Title" xml:space="preserve">
+    <value>Image loading</value>
+  </data>
+    <data name="Title_Create" xml:space="preserve">
+        <value>Create Company</value>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="Theme" xml:space="preserve">
+        <value>Theme</value>
+    </data>
+    <data name="Description" xml:space="preserve">
+        <value>Description</value>
+    </data>
+    <data name="DateEnd" xml:space="preserve">
+        <value>Date end</value>
+    </data>
+    <data name="URLVideo" xml:space="preserve">
+        <value>URL Video</value>
+    </data>
+    <data name="NeedMoney" xml:space="preserve">
+        <value>Need Money</value>
+    </data>
+    <data name="Bonuse_Title" xml:space="preserve">
+        <value>Title</value>
+    </data>
+    <data name="Bonuse_Definition" xml:space="preserve">
+        <value>Definition</value>
+    </data>
+    <data name="Bonuse_Description" xml:space="preserve">
+        <value>Description</value>
+    </data>
+    <data name="Bonuses_Title" xml:space="preserve">
+        <value>Bonuses</value>
+    </data>
+    <data name="CreateBonuse" xml:space="preserve">
+        <value>Create bonuse</value>
+    </data>
+    <data name="Button_Edit" xml:space="preserve">
+        <value>Edit</value>
+    </data>
+    <data name="Button_Create" xml:space="preserve">
+        <value>Create</value>
+    </data>
+    <data name="Title_EditCompany" xml:space="preserve">
+        <value>Edit company</value>
+    </data>
+    <data name="Title_CreateCompany" xml:space="preserve">
+        <value>Create company</value>
+    </data>
+    <data name="Choose_MainImage" xml:space="preserve">
+        <value>Choose Images</value>
+    </data>
+    <data name="Choose_Images" xml:space="preserve">
+        <value>Choose Main Image</value>
+    </data>
+</root>

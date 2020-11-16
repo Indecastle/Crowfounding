@@ -73,7 +73,10 @@
         var claimUser = authState.User;
         User = await _userManager.GetUserAsync(claimUser);
 
-        LocalCompany = await _db.Companies.Include(c => c.CompanyImages).FirstOrDefaultAsync(c => c.Id == CompanyId);
+        LocalCompany = await _db.Companies
+            .Include(c => c.CompanyImages)
+            .Include(c => c.Bonuses)
+            .FirstOrDefaultAsync(c => c.Id == CompanyId);
         if (LocalCompany != null && await _chatService.InitService(LocalCompany, User))
         {
             TotalCompany = _chatService.TotalCompany;

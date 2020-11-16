@@ -8,27 +8,32 @@
 
 @if (LocalCompany != null)
 {
-
     <div class="row">
         @if (LocalCompany.UserID == User?.Id && LocalCompany.IsEnd)
         {
-            <div class="col-md-4 offset-md-9">
+            <div class="m-auto">
                 <button class="btn btn-danger" @onclick="RedirectToTakeMoney">@L["Main_TakeMoney"]</button>
             </div>
         }
-        <div class="col-md-12 text-center"><h3>@L["Main_ThemeOfCompany"]: @LocalCompany.Theme</h3></div>
+        <div class="col-md-12 text-center">
+            <h3>@L["Main_ThemeOfCompany"]: @LocalCompany.Theme</h3>
+        </div>
     </div>
 
     <div class="row">
-        <div class="col-md-8"><h4>@L["Main_RatingComapany"]: @LocalCompany.Rating </h4></div>
-        <div class="col-md-8"><h5>@L["Main_Money"] @LocalCompany.CurrentMoney / @LocalCompany.NeedMoney</h5></div>
+        <div class="col-md-8">
+            <h4>@L["Main_RatingComapany"]: @LocalCompany.Rating </h4>
+        </div>
+        <div class="col-md-8">
+            <h5>@L["Main_Money"] @LocalCompany.CurrentMoney / @LocalCompany.NeedMoney</h5>
+        </div>
 
     </div>
     @if (LocalCompany.EndAtNextDay == true)
     {
-<h4 class="text-center text-danger"> @L["Main_Enformation1"]! </h4>
+        <h4 class="text-center text-danger"> @L["Main_Enformation1"]! </h4>
     }
-    <hr />
+    <hr/>
     <h3 class="text-center">@L["Main_Photos"]</h3>
     @if (LocalCompany.CompanyImages.Count > 0)
     {
@@ -55,13 +60,13 @@
                     {
                         count++;
                         <div class="carousel-item active" style="transition: transform .6s ease-in-out,-webkit-transform .6s ease-in-out;">
-                            <img src="@image.PhotoPath" class="carousel-image" />
+                            <img src="@image.PhotoPath" class="carousel-image"/>
                         </div>
                     }
                     else
                     {
                         <div class="carousel-item " style="transition: transform .6s ease-in-out,-webkit-transform .6s ease-in-out;">
-                            <img src="@image.PhotoPath" class="carousel-image" />
+                            <img src="@image.PhotoPath" class="carousel-image"/>
                         </div>
                     }
                 }
@@ -78,28 +83,64 @@
     }
     else
     {
-<h3 class="text-center">@L["Main_NoPhotos"]</h3>
+        <h3 class="text-center">@L["Main_NoPhotos"]</h3>
     }
 
-    <hr />
+    <hr/>
     <h3 class="text-center">@L["Main_VideoCompany"]</h3>
     <iframe height="315" src="https://www.youtube.com/embed/@GetParameterFromQuery()"
             frameborder="0"
             style="margin: 0 auto; display: block; width: inherit;"
             allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen></iframe>
-    <hr />
+            allowfullscreen>
+    </iframe>
+    <hr/>
 
 
     <h3 class="text-center">@L["Main_Description"]</h3>
     <div>
         @ChatHelper.Parse(LocalCompany.Description)
     </div>
+
+    <div class="border-top my-3">
+        <MatAccordion>
+            <MatExpansionPanel>
+                <MatExpansionPanelSummary>
+                    <MatExpansionPanelSubHeader>
+                        <h3 class="mb-0">@L["Bonuses_Title"]</h3>
+                    </MatExpansionPanelSubHeader>
+                </MatExpansionPanelSummary>
+                <MatExpansionPanelDetails>
+                    <MatAccordion>
+                        @foreach (var bonuse in LocalCompany.Bonuses)
+                        {
+                            <MatExpansionPanel>
+                                <MatExpansionPanelSummary>
+                                    <MatExpansionPanelHeader Style="white-space: nowrap; overflow-x: hidden; ">
+                                        <h4 class="mb-0">@bonuse.Title</h4>
+                                    </MatExpansionPanelHeader>
+                                </MatExpansionPanelSummary>
+                                <MatExpansionPanelDetails>
+                                    <MatTextField @bind-Value="@bonuse.Title" ReadOnly="true" Label=@L["Title"] FullWidth="true"></MatTextField>
+                                    <MatTextField @bind-Value="@bonuse.Definition" ReadOnly="true" Label=@L["Definition"] TextArea="true" FullWidth="true"></MatTextField>
+                                    <MatTextField @bind-Value="@bonuse.Description" ReadOnly="true" Label=@L["Description"] TextArea="true" FullWidth="true"></MatTextField>
+                                    <MatTextField @bind-Value="bonuse.NeedAmount"  ReadOnly="true" Label=@L["Need Amount"]></MatTextField  >
+                                </MatExpansionPanelDetails>
+                            </MatExpansionPanel>
+                        }
+                    </MatAccordion>
+                </MatExpansionPanelDetails>
+            </MatExpansionPanel>
+        </MatAccordion>
+
+    </div>
 }
 
 @code {
+
     [Parameter]
     public Company LocalCompany { get; set; }
+
     [Parameter]
     public User User { get; set; }
 
@@ -111,7 +152,9 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender) {}
+        if (firstRender)
+        {
+        }
     }
 
     public string GetParameterFromQuery()
@@ -125,12 +168,11 @@
         {
             return HttpUtility.ParseQueryString(LocalCompany.URLVideo).Get("v");
         }
-
-
     }
 
     private void RedirectToTakeMoney()
     {
         NavigationManager.NavigateTo("/Company/TakeMoney/" + LocalCompany.Id);
     }
+
 }

@@ -6,10 +6,11 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider;
 @inject UserManager<User> _userManager;
 @inject NavigationManager NavigationManager
+@inject IMatToaster Toaster
 @inject ICompanyService _companyService
 @inject IStringLocalizer<CreateCompany> L
 @attribute [Authorize]
-    <h2>@(isEditing ? "EditCompany" : "CreateCompany")</h2>
+    <h2>@(isEditing ? L["Title_EditCompany"] : L["Title_CreateCompany"])</h2>
 
 <div class="container">
     <EditForm EditContext="@_editContext" OnValidSubmit="HandleValidSubmit">
@@ -17,13 +18,13 @@
         <ValidationSummary />
 
         <div>
-            <label for="Nameid">Name:</label>
+            <label for="Nameid">@L["Name"]:</label>
 
-            <InputText @bind-Value="_viewModel.Name" id="Nameid" class="form-control" aria-describedby="name..." placeholder="name..." />
+            <InputText @bind-Value="_viewModel.Name" id="Nameid" class="form-control" aria-describedby="name..." placeholder="@(L["Name"] + "...")" />
             <ValidationMessage For="@(() => _viewModel.Name)" />
         </div>
         <div class="form-group">
-            <label for="selectid">Theme:</label>
+            <label for="selectid">@L["Theme"]:</label>
             <InputSelect @bind-Value="_viewModel.Theme" class="form-control" id="selectid">
                 <option value="@Theme.Education">Education</option>
                 <option value="@Theme.Electronics">Electronics</option>
@@ -34,17 +35,17 @@
             <ValidationMessage For="@(() => _viewModel.Theme)" />
         </div>
         <div class="form-group shadow-textarea">
-            <label for="DescrId">Description:</label>
-            <InputTextArea class="form-control" rows="5" placeholder="Write Description with Markdown..." id="DescrId" @bind-Value="_viewModel.Description" />
+            <label for="DescrId">@L["Description"]:</label>
+            <InputTextArea class="form-control" rows="5" placeholder="@(L["Description"] + "...")" id="DescrId" @bind-Value="_viewModel.Description" />
             <ValidationMessage For="@(() => _viewModel.Description)" />
         </div>
         <div class="form-group">
-            End:
+            @L["DateEnd"]:
             <InputDate class="form-control" @bind-Value="_viewModel.End" />
             <ValidationMessage For="@(() => _viewModel.End)" />
         </div>
         <div class="form-group">
-            <label for="NeedMoneyid">NeedMoney:</label>
+            <label for="NeedMoneyid">@L["NeedMoney"]:</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <div class="input-group-text">$</div>
@@ -57,7 +58,7 @@
             <ValidationMessage For="@(() => _viewModel.NeedMoney)" />
         </div>
         <div class="form-group">
-            <label for="URLVideoid">URLVideo:</label>
+            <label for="URLVideoid">@L["URLVideo"]:</label>
             <InputText @bind-Value="_viewModel.URLVideo" class="form-control" id="URLVideoid" />
             <ValidationMessage For="@(() => _viewModel.URLVideo)" />
         </div>
@@ -65,14 +66,14 @@
         <div class="form-group">
             <div class="custom-file">
                 <InputFile OnChange="LoadMainImage" class="custom-file-input" id="MainImageId" />
-                <label class="custom-file-label" for="MainImageId">Choose Main Image...</label>
+                <label class="custom-file-label" for="MainImageId">@L["Choose_MainImage"]...</label>
                 <ValidationMessage For="@(() => _viewModel.isLoadedMainImage)" />
             </div>
         </div>
         <div class="form-group">
             <div class="custom-file">
                 <InputFile multiple OnChange="LoadImages" class="custom-file-input" id="ImagesId" />
-                <label class="custom-file-label" for="ImagesId">Choose images...</label>
+                <label class="custom-file-label" for="ImagesId">@L["Choose_Images"]...</label>
 
             </div>
         </div>
@@ -81,29 +82,32 @@
             <MatAccordion>
                 <MatExpansionPanel>
                     <MatExpansionPanelSummary>
-                        <MatExpansionPanelHeader>Bonuses</MatExpansionPanelHeader>
-                        <MatExpansionPanelSubHeader>Type your name and age</MatExpansionPanelSubHeader>
+                        <MatExpansionPanelSubHeader>
+                            <h3 class="mb-0">@L["Bonuses_Title"]</h3>
+                        </MatExpansionPanelSubHeader>
                     </MatExpansionPanelSummary>
                     <MatExpansionPanelDetails>
                         <div @onclick:stopPropagation="true"
                              @onclick:preventDefault="true"
                              @onmousedown:stopPropagation="true"
                              @onmousedown:preventDefault="true">
-                            <MatButton OnClick="@AddBonuse" Label="Create bonuse"></MatButton>
+                            <MatButton OnClick="@AddBonuse" Label="@L["CreateBonuse"]"></MatButton>
                         </div>
                         <MatAccordion>
                             @foreach (var bonuseVm in _viewModel.Bonuses)
                             {
                                 <MatExpansionPanel>
                                     <MatExpansionPanelSummary>
-                                        <MatExpansionPanelHeader Style="white-space: nowrap; overflow-x: hidden; ">@bonuseVm.Title</MatExpansionPanelHeader>
+                                        <MatExpansionPanelHeader Style="white-space: nowrap; overflow-x: hidden; ">
+                                            <h4 class="mb-0">@bonuseVm.Title</h4>
+                                        </MatExpansionPanelHeader>
                                     </MatExpansionPanelSummary>
                                     <MatExpansionPanelDetails>
-                                        <MatTextField @bind-Value="@bonuseVm.Title" Label="Title" FullWidth="true"></MatTextField>
-                                        <MatTextField @bind-Value="@bonuseVm.Definition" Label="Definition" TextArea="true" FullWidth="true"></MatTextField>
-                                        <MatTextField @bind-Value="@bonuseVm.Description" Label="Description" TextArea="true" FullWidth="true"></MatTextField>
-                                        <MatNumericUpDownField Label="Need Amount"
-                                                               @bind-Value=bonuseVm.NeedAmount
+                                        <MatTextField @bind-Value="@bonuseVm.Title" Label=@L["Bonuse_Title"] FullWidth="true"></MatTextField>
+                                        <MatTextField @bind-Value="@bonuseVm.Definition" Label=@L["Bonuse_Definition"] TextArea="true" FullWidth="true"></MatTextField>
+                                        <MatTextField @bind-Value="@bonuseVm.Description" Label=@L["Bonuse_Description"] TextArea="true" FullWidth="true"></MatTextField>
+                                        <MatNumericUpDownField Label=@L["NeedMoney"]
+                                                               @bind-Value="@bonuseVm.NeedAmount"
                                                                FieldType="MatNumericUpDownFieldType.Numeric"
                                                                DecimalPlaces=2>
                                         </MatNumericUpDownField>
@@ -196,6 +200,7 @@
                 _viewModel.MainImage = urlLink;
                 _viewModel.isLoadedMainImage = true;
                 _editContext.Validate();
+                Toaster.Add(L["Toaster_LoadMainImage_Message"], MatToastType.Success, L["Toaster_LoadImage_Title"]);
                 StateHasChanged();
             }
         }
@@ -224,6 +229,7 @@
             _viewModel.Images = urlLinks;
             _viewModel.isLoadedCompanyImages = true;
             _editContext.Validate();
+            Toaster.Add(L["Toaster_LoadImages_Message"], MatToastType.Success, L["Toaster_LoadImage_Title"]);
             StateHasChanged();
             Console.WriteLine("Images Loaded ------------------------------");
         }

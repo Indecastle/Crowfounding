@@ -192,4 +192,19 @@
   <data name="Rating_YourRatingIs" xml:space="preserve">
     <value>Youre rating is</value>
   </data>
+  <data name="Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Definition" xml:space="preserve">
+    <value>Definition</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Need Amount" xml:space="preserve">
+    <value>Need Amount</value>
+  </data>
+  <data name="Bonuses_Title" xml:space="preserve">
+    <value>Bonuses</value>
+  </data>
 </root>

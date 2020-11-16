@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Toaster_LoadImages_Message" xml:space="preserve">
+    <value>Загрузка изображений завершена</value>
+  </data>
+    <data name="Toaster_LoadMainImage_Message" xml:space="preserve">
+    <value>Загрузка основного изображения завершена</value>
+  </data>
+    <data name="Toaster_LoadImage_Title" xml:space="preserve">
+    <value>Загрузка изображения</value>
+  </data>
+    <data name="Title_Create" xml:space="preserve">
+        <value>Создание компании</value>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Название</value>
+    </data>
+    <data name="Theme" xml:space="preserve">
+        <value>Тема</value>
+    </data>
+    <data name="Description" xml:space="preserve">
+        <value>Описание</value>
+    </data>
+    <data name="DateEnd" xml:space="preserve">
+        <value>Дата окончания</value>
+    </data>
+    <data name="URLVideo" xml:space="preserve">
+        <value>Ссылка на видео</value>
+    </data>
+    <data name="NeedMoney" xml:space="preserve">
+        <value>Необходимое количество денег</value>
+    </data>
+    <data name="Bonuses_Title" xml:space="preserve">
+        <value>Бонусы</value>
+    </data>
+    <data name="Bonuse_Definition" xml:space="preserve">
+        <value>Определение</value>
+    </data>
+    <data name="Bonuse_Description" xml:space="preserve">
+        <value>Описание</value>
+    </data>
+    <data name="Bonuse_Title" xml:space="preserve">
+        <value>Заголовок</value>
+    </data>
+    <data name="CreateBonuse" xml:space="preserve">
+        <value>Создание бонуса</value>
+    </data>
+    <data name="Button_Edit" xml:space="preserve">
+        <value>Изменить</value>
+    </data>
+    <data name="Button_Create" xml:space="preserve">
+        <value>Создать</value>
+    </data>
+    <data name="Title_CreateCompany" xml:space="preserve">
+        <value>Создание компании</value>
+    </data>
+    <data name="Title_EditCompany" xml:space="preserve">
+        <value>Редактирование компании</value>
+    </data>
+    <data name="Choose_Images" xml:space="preserve">
+        <value>Выберите основное изображение</value>
+    </data>
+    <data name="Choose_MainImage" xml:space="preserve">
+        <value>Выберите дополнительные изображения</value>
+    </data>
+</root>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Crowfounding.Services.Finances
 {
-    interface IFinanceService
+    public interface IFinanceService
     {
         Task DonateToCompany(User user, Company company, decimal Amount);
     }
