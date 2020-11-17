@@ -76,3 +76,16 @@
     max-width: 35px;
     max-height: 35px;
 }
+
+
+.mdc-dialog .mdc-dialog__scrim {
+    background-color: rgba(0,0,0,.15)!important;
+}
+
+.my-table-button {
+    display: table-cell;
+    font-size: 1.2rem;
+    white-space: nowrap;
+    overflow-x: hidden;
+    max-width: 300px;
+}

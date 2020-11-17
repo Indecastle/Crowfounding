@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Crowfounding.Models.Finance;
 
 namespace Crowfounding.Models
 {
@@ -21,5 +22,9 @@ namespace Crowfounding.Models
         public Guid BonuseId { get; set; }
         
         public virtual Bonuse Bonuse { get; set; }
+        
+        public Guid TotalDonateId { get; set; }
+        
+        public virtual TotalDonate TotalDonate { get; set; }
     }
 }

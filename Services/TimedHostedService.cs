@@ -63,7 +63,8 @@ namespace Crowfounding.BackroundJob
                 foreach(TotalDonate totalDonate in _context.TotalDonates
                     .Include(td => td.User)
                     .Include(td => td.Company.UserBonuses)
-                    .Include(td => td.Company.Bonuses))
+                    .Include(td => td.Company.Bonuses)
+                    .Include(td => td.Company.TotalDonates))
                 {
                     foreach (var bonuse in totalDonate.Company.Bonuses)
                     {
@@ -73,9 +74,10 @@ namespace Crowfounding.BackroundJob
                         {
                             _context.UserBonuses.Add(new UserBonuse
                             {
-                                BonuseId = bonuse.Id,
-                                CompanyId = totalDonate.CompanyId,
                                 UserId = totalDonate.UserId,
+                                CompanyId = totalDonate.CompanyId,
+                                BonuseId = bonuse.Id,
+                                TotalDonateId = totalDonate.Id,
                                 CreateAt = dateNow
                             });
                             _logger.LogInformation($"User Get Bonuse '{bonuse.Title}' with {bonuse.NeedAmount}$ is ended");

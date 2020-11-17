@@ -15,7 +15,7 @@
 @if (!IsLoaded || IsLoaded && Model.Any())
 {
     <div class="row">
-        @foreach (var company in Model.OrderByDescending(s => s.Rating))
+        @foreach (var company in Model.OrderByDescending(s => s.Rating).Take(3))
         {
             <div class="col-sm-6 col-md-4 my-grid">
                 <div class="img-thumbnail text-center">
@@ -23,7 +23,7 @@
                         <img src="@company.MainImage" class="grid-image"/>
                     </div>
                     <div class="caption">
-                        <h3>@L["Name"]: @company.Name</h3>
+                        <h3 style="white-space: nowrap; overflow-x: hidden;">@L["Name"]: @company.Name</h3>
                         <h4>@L["Theme"]: @company.Theme</h4>
                         <h5>@L["Rating"]: @company.Rating</h5>
                         <p>
@@ -94,9 +94,7 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-        }
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     public void RedirectToCompany(Company company)

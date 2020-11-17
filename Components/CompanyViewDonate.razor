@@ -68,17 +68,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            try
-            {
-                await JsRuntime.InvokeVoidAsync("initCompanyViewDonate");
-            }
-            catch (JSException)
-            {
-            }
-
-        }
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleValidSubmit()

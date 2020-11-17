@@ -81,4 +81,7 @@
     <data name="Choose_Images" xml:space="preserve">
         <value>Choose Main Image</value>
     </data>
+    <data name="Button_Delete" xml:space="preserve">
+        <value>Delete</value>
+    </data>
 </root>

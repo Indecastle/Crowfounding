@@ -47,18 +47,6 @@
     public DonateViewModel _viewModel = new DonateViewModel();
     private bool locker = true;
     private decimal _currency;
-    public string Currency
-    {
-        get
-        {
-            return UiUtil.FormatDecimal(_currency);
-        }
-        set
-        {
-            _currency = decimal.Parse(value);
-        }
-    }
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -67,17 +55,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            try
-            {
-                await JsRuntime.InvokeVoidAsync("initCompanyViewDonate");
-            }
-            catch (JSException)
-            {
-            }
-
-        }
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleValidSubmit()

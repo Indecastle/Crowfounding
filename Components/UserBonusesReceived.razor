@@ -1,0 +1,145 @@
+﻿@inject IStringLocalizer<UserBonusesReceived> L
+
+<MatTable Items="@sortedData" class="mat-elevation-z5" ShowPaging="true" UseSortHeaderRow="true" Striped="true">
+    <MatTableHeader>
+        <MatSortHeaderRow SortChanged="@SortData">
+            <MatSortHeader SortId="bonusTitle">
+                <span>@L["Table_Bonus_Title"]</span>
+            </MatSortHeader>
+            <MatSortHeader SortId="companyName">
+                <span>@L["Table_Company_Name"]</span>
+            </MatSortHeader>
+            <MatSortHeader SortId="needMoney">
+                <span>@L["Table_Company_NeedMoney"]</span>
+            </MatSortHeader>
+            <MatSortHeader SortId="CreateAt">
+                <span>@L["Table_CreateAt"]</span>
+            </MatSortHeader>
+        </MatSortHeaderRow>
+    </MatTableHeader>
+    <MatTableRow>
+        <td>
+            <span>
+                <h4 class="mt-0">
+                    <div>
+                    <MatButton Class="my-table-button"
+                               OnClick="@(() => OpenDialog((UserBonuse) context))">
+                        @context.Bonuse.Title
+                    </MatButton>
+                    </div>
+                </h4>
+            </span>
+        </td>
+        <td>
+            <span>
+                <h4 class="mt-0">
+                    <MatButton Class="my-table-button"
+                               Link='@($"CompanyView/{context.Company.Id}")'>
+                        @context.Company.Name
+                    </MatButton>
+                </h4>
+            </span>
+        </td>
+        <td>
+            <span>@UiUtil.FormatDecimal(context.Bonuse.NeedAmount)</span>
+        </td>
+        <td>
+            <span>@context.CreateAt</span>
+        </td>
+    </MatTableRow>
+</MatTable>
+
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+    <MatDialogTitle>@L["Modal_Details"]</MatDialogTitle>
+    <MatDialogContent>
+        <div class="card">
+            <div class="card-header">
+                @OpenedUserBonuse?.Bonuse.Title
+            </div>
+            <div class="card-body">
+                <blockquote class="blockquote mb-0">
+                    <p>@OpenedUserBonuse?.Bonuse.Definition</p>
+                    <footer class="blockquote-footer">@OpenedUserBonuse?.Bonuse.Description</footer>
+                </blockquote>
+                <hr/>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm">
+                            <h6>@L["Modal_NeedMoney"]:</h6>
+                            @UiUtil.FormatDecimal(OpenedUserBonuse?.Bonuse.NeedAmount ?? 0)
+                        </div>
+                        <div class="col-sm">
+                            <h6>@L["Modal_Donated"]:</h6>
+                            @UiUtil.FormatDecimal(OpenedUserBonuse?.TotalDonate.Amount ?? 0)
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </MatDialogContent>
+</MatDialog>
+
+@code {
+
+    [Parameter]
+    public User User { get; set; }
+
+    bool dialogIsOpen = false;
+    UserBonuse OpenedUserBonuse { get; set; }
+
+    UserBonuse[] sortedData = new UserBonuse[0];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        SortData(null);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    void SortData(MatSortChangedEvent sort)
+    {
+        sortedData = User.UserBonuses.ToArray();
+        if (!(sort == null || sort.Direction == MatSortDirection.None || string.IsNullOrEmpty(sort.SortId)))
+        {
+            Comparison<UserBonuse> comparison = null;
+            switch (sort.SortId)
+            {
+                case "title":
+                    comparison = (s1, s2) => string.Compare(s1.Bonuse.Title, s2.Bonuse.Title, StringComparison.InvariantCultureIgnoreCase);
+                    break;
+                case "company_name":
+                    comparison = (s1, s2) => string.Compare(s1.Company.Name, s2.Company.Name, StringComparison.InvariantCultureIgnoreCase);
+                    break;
+                case "needMoney":
+                    comparison = (s1, s2) => s1.Bonuse.NeedAmount.CompareTo(s2.Bonuse.NeedAmount);
+                    break;
+                case "CreateAt":
+                    comparison = (s1, s2) => s1.CreateAt.CompareTo(s2.CreateAt);
+                    break;
+            }
+            if (comparison != null)
+            {
+                if (sort.Direction == MatSortDirection.Desc)
+                {
+                    Array.Sort(sortedData, (s1, s2) => -1 * comparison(s1, s2));
+                }
+                else
+                {
+                    Array.Sort(sortedData, comparison);
+                }
+            }
+        }
+    }
+
+    private void OpenDialog(UserBonuse userBonuse)
+    {
+        dialogIsOpen = true;
+        OpenedUserBonuse = userBonuse;
+    }
+
+}

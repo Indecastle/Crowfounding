@@ -9,6 +9,7 @@
 @if (User != null)
 {
     <UserMoneyAdd User="User" />
+    <UserBonusesReceived User="User" />
 }
 
 @code {
@@ -22,6 +23,12 @@
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         claimUser = authState.User;
-        User = await _userManager.GetUserAsync(claimUser);
+        User = await _db.User
+            .Include(u => u.UserBonuses).ThenInclude(ub => ub.Company)
+            .Include(u => u.UserBonuses).ThenInclude(ub => ub.Bonuse)
+            .Include(u => u.UserBonuses).ThenInclude(ub => ub.TotalDonate)
+            .SingleOrDefaultAsync(u => u.UserName == claimUser.Identity.Name);
+        Console.WriteLine("kek");
+        // User = await _userManager.GetUserAsync(claimUser);
     }
 }

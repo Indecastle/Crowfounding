@@ -106,6 +106,15 @@ namespace Crowfounding.Resources.Pages.CompanyPages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Удалить.
+        /// </summary>
+        internal static string Button_Delete {
+            get {
+                return ResourceManager.GetString("Button_Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Изменить.
         /// </summary>
         internal static string Button_Edit {

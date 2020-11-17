@@ -121,6 +121,11 @@ namespace Crowfounding.Data
                 .WithMany(a => a.UserBonuses)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
+            builder.Entity<UserBonuse>()
+                .HasOne(a => a.TotalDonate)
+                .WithMany(a => a.UserBonuses)
+                .HasForeignKey(d => d.TotalDonateId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
         public DbSet<User> User { get; set; }
