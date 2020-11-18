@@ -9,9 +9,7 @@
 @inject HttpClient httpClient
 @using MatBlazor
 
-<h3 class="text-center">@L["List_of_companies"]</h3>
-<br/>
-<body>
+<h3 class="text-center">@L["Top3_companies"]</h3>
 @if (!IsLoaded || IsLoaded && Model.Any())
 {
     <div class="row">
@@ -35,6 +33,7 @@
         }
     </div>
 
+    <h3 class="text-center mt-3">@L["List_of_companies"]</h3>
     <MatTable Items="@sortedData" class="mat-elevation-z5" ShowPaging="true" UseSortHeaderRow="true" Striped="true" FilterByColumnName="Name">
         <MatTableHeader>
             <MatSortHeaderRow SortChanged="@SortData">
@@ -51,8 +50,8 @@
             <td>
                 <div class="media">
                     <img src="@context.MainImage" class="mr-3 rounded-lg mw-35" alt="...">
-                    <div class="media-body">
-                        <h4 class="mt-0">
+                    <div class="mt-1 media-body">
+                        <h4 class="my-table-button">
                             <NavLink href='@($"CompanyView/{context.Id}")'>@context.Name</NavLink>
                         </h4>
                     </div>
@@ -71,8 +70,6 @@ else
 {
     <h3>@L["No_company"]</h3>
 }
-
-</body>
 
 @code {
     public IEnumerable<Company> Model { get; set; } = Enumerable.Empty<Company>();

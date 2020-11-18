@@ -63,8 +63,7 @@ namespace Crowfounding.BackroundJob
                 foreach(TotalDonate totalDonate in _context.TotalDonates
                     .Include(td => td.User)
                     .Include(td => td.Company.UserBonuses)
-                    .Include(td => td.Company.Bonuses)
-                    .Include(td => td.Company.TotalDonates))
+                    .Include(td => td.Company.Bonuses))
                 {
                     foreach (var bonuse in totalDonate.Company.Bonuses)
                     {

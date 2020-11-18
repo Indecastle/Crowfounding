@@ -153,4 +153,7 @@
   <data name="Theme" xml:space="preserve">
     <value>Тема</value>
   </data>
+  <data name="Top3_companies" xml:space="preserve">
+    <value>Топ 3 компании по рейтингу</value>
+  </data>
 </root>

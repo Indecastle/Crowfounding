@@ -28,7 +28,6 @@
             .Include(u => u.UserBonuses).ThenInclude(ub => ub.Bonuse)
             .Include(u => u.UserBonuses).ThenInclude(ub => ub.TotalDonate)
             .SingleOrDefaultAsync(u => u.UserName == claimUser.Identity.Name);
-        Console.WriteLine("kek");
         // User = await _userManager.GetUserAsync(claimUser);
     }
 }
