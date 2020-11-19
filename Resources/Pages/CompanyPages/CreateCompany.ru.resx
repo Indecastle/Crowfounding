@@ -76,12 +76,12 @@
         <value>Редактирование компании</value>
     </data>
     <data name="Choose_Images" xml:space="preserve">
-        <value>Выберите основное изображение</value>
-    </data>
-    <data name="Choose_MainImage" xml:space="preserve">
         <value>Выберите дополнительные изображения</value>
     </data>
     <data name="Button_Delete" xml:space="preserve">
         <value>Удалить</value>
+    </data>
+    <data name="Choose_MainImage" xml:space="preserve">
+        <value>Выберите основное изображение</value>
     </data>
 </root>

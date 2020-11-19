@@ -76,10 +76,10 @@
         <value>Create company</value>
     </data>
     <data name="Choose_MainImage" xml:space="preserve">
-        <value>Choose Images</value>
+        <value>Choose Main Image</value>
     </data>
     <data name="Choose_Images" xml:space="preserve">
-        <value>Choose Main Image</value>
+        <value>Choose Images</value>
     </data>
     <data name="Button_Delete" xml:space="preserve">
         <value>Delete</value>

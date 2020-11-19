@@ -124,7 +124,7 @@ namespace Crowfounding.Resources.Pages.CompanyPages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Выберите основное изображение.
+        ///   Looks up a localized string similar to Выберите дополнительные изображения.
         /// </summary>
         internal static string Choose_Images {
             get {
@@ -133,7 +133,7 @@ namespace Crowfounding.Resources.Pages.CompanyPages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Выберите дополнительные изображения.
+        ///   Looks up a localized string similar to Выберите основное изображение.
         /// </summary>
         internal static string Choose_MainImage {
             get {
