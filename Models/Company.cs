@@ -43,6 +43,7 @@ namespace Crowfounding.Models
         public string MainImage { get; set; }
         public bool EndAtNextDay { get;set;}
         public bool IsEnd { get; set; }
+        public bool IsDeleted { get; set; }
 
         public virtual List<ImagesCompany> CompanyImages { get; set; }
 

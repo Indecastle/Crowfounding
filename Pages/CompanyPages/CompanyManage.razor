@@ -1,5 +1,5 @@
 ﻿@page "/CompanyManage"
-@using  System.Security.Claims;
+@using System.Security.Claims;
 @inject ApplicationDbContext _db;
 @inject AuthenticationStateProvider AuthenticationStateProvider;
 @inject UserManager<User> _userManager;
@@ -16,7 +16,7 @@
             <NavLink class="btn btn-primary" href="CreateCompany">@L["CreateCompany"]</NavLink>
         </div>
         <div class="col-sm-3 my-1">
-            <input class="form-control" type="text" name="SearchString" @bind="SearchText" @oninput="(e => FilterFunc(e.Value.ToString()))" />
+            <input class="form-control" type="text" name="SearchString" @bind="SearchText" @oninput="(e => FilterFunc(e.Value.ToString()))"/>
         </div>
         <AuthorizeView Roles="Admin, SuperAdmin">
             <div class="col-auto my-1">
@@ -31,48 +31,48 @@
 
     </div>
 
-    <hr />
+    <hr/>
     @if (CompaniesFilter != null)
     {
         <div>
             <table class="table table-striped">
                 <thead>
-                    <tr>
-                        <th scope="col">@L["Table_Name"]</th>
-                        <th scope="col">@L["Table_Theme"]</th>
-                        <th scope="col">@L["Table_End"]</th>
-                        <th scope="col">@L["Table_Money"]</th>
-                        <th scope="col">@L["Table_NeedMoney"]</th>
-                        <th scope="col"></th>
-                    </tr>
+                <tr>
+                    <th scope="col">@L["Table_Name"]</th>
+                    <th scope="col">@L["Table_Theme"]</th>
+                    <th scope="col">@L["Table_End"]</th>
+                    <th scope="col">@L["Table_Money"]</th>
+                    <th scope="col">@L["Table_NeedMoney"]</th>
+                    <th scope="col"></th>
+                </tr>
                 </thead>
                 <tbody>
-                    @{
-                        bool isAdmin = claimUser.IsInRole("Admin");
-                        bool isSuperAdmin = claimUser.IsInRole("SuperAdmin");
-                    }
-                    @foreach (var company in CompaniesFilter)
-                    {
-                        <tr @onclick="(e => RedirectToCompany(company.Id))">
+                @{
+                    bool isAdmin = claimUser.IsInRole("Admin");
+                    bool isSuperAdmin = claimUser.IsInRole("SuperAdmin");
+                }
+                @foreach (var company in CompaniesFilter)
+                {
+                    <tr @onclick="(e => RedirectToCompany(company.Id))">
 
-                            <td>@company.Name</td>
-                            <td>@company.Theme</td>
-                            <td>@company.End.ToShortDateString()</td>
-                            <td>@company.CurrentMoney</td>
-                            <td>@company.NeedMoney</td>
-                            @if (company.UserID == User.Id || isAdmin || isSuperAdmin)
-                            {
-                                <td @onclick:stopPropagation>
-                                    <NavLink class="btn btn-sm btn-info" href='@($"CreateCompany/edit/{company.Id}")'>@L["Edit"]</NavLink>
-                                    <a class="btn btn-sm btn-danger" target="_top" href='@($"DeleteCompany{GetUri(company.Id)}")'>@L["Delete"]</a>
-                                </td>
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
-                        </tr>
-                    }
+                        <td>@company.Name</td>
+                        <td>@company.Theme</td>
+                        <td>@company.End.ToShortDateString()</td>
+                        <td>@company.CurrentMoney</td>
+                        <td>@company.NeedMoney</td>
+                        @if (company.UserID == User.Id || isAdmin || isSuperAdmin)
+                        {
+                            <td @onclick:stopPropagation>
+                                <NavLink class="btn btn-sm btn-info" href='@($"CreateCompany/edit/{company.Id}")'>@L["Edit"]</NavLink>
+                                <a class="btn btn-sm btn-danger" target="_top" href='@($"DeleteCompany{GetUri(company.Id)}")'>@L["Delete"]</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                }
                 </tbody>
             </table>
         </div>
@@ -80,12 +80,16 @@
 </div>
 
 @code {
+
     [Parameter]
     public User User { get; set; }
+
     [Parameter]
     public List<Company> Companies { get; set; }
+
     [Parameter]
     public string SearchText { get; set; }
+
     public List<Company> CompaniesFilter { get; set; }
     private ClaimsPrincipal claimUser;
 
@@ -99,7 +103,7 @@
 
         Companies = _db.Companies.Where(c => c.UserID == User.Id).ToList();
         CompaniesFilter = Companies;
-        OnlyMyChange(new ChangeEventArgs { Value = false });
+        OnlyMyChange(new ChangeEventArgs {Value = false});
     }
 
     public async Task FilterFunc(string searchText)
@@ -117,13 +121,13 @@
         var uri = new Uri(NavigationManager.Uri)
             .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
         var query = $"?companyId={companyId}&" +
-            $"redirectUri={Uri.EscapeDataString(uri)}";
+                    $"redirectUri={Uri.EscapeDataString(uri)}";
         return query;
     }
 
     public async Task OnlyMyChange(ChangeEventArgs e)
     {
-        if ((bool)e.Value)
+        if ((bool) e.Value)
             Companies = _db.Companies.Where(c => c.UserID == User.Id).ToList();
         else
         {
@@ -139,4 +143,5 @@
         FilterFunc(SearchText);
         StateHasChanged();
     }
+
 }

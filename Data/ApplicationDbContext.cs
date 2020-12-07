@@ -78,7 +78,8 @@ namespace Crowfounding.Data
             builder.Entity<Transaction>()
                 .HasOne(a => a.Company)
                 .WithMany(d => d.Transactions)
-                .HasForeignKey(d => d.CompanyId);
+                .HasForeignKey(d => d.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Transaction>()
                 .Property(t => t.Amount)
                 .HasColumnType("decimal(18,4)");

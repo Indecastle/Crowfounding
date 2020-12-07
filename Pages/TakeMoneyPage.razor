@@ -11,9 +11,9 @@
 <h2 class="text-center">@L["Title"]</h2>
 @if (LocalCompany != null)
 {
-    <h3>@L["Info1"] @LocalCompany.CurrentMoney $</h3>
+    <h3>@L["Info1"] @UiUtil.FormatDecimal(LocalCompany.CurrentMoney) $</h3>
     <h3>@L["Info2"] @prosent %</h3>
-    <h3>@L["Info3"] @money $</h3>
+    <h3>@L["Info3"] @UiUtil.FormatDecimal(money) $</h3>
     <br>
 
     <button class="btn btn-primary" @onclick="DeleteCompany">@L["button"]</button>
@@ -44,8 +44,8 @@
         if (LocalCompany == null || LocalCompany.IsEnd == false || LocalCompany.UserID != User.Id)
             RedirectToHome();
 
-        money = LocalCompany.CurrentMoney * 0.9M;
-        prosent = 10;
+        money = LocalCompany.CurrentMoney * 0.95M;
+        prosent = 5;
     }
 
     private void RedirectToHome()
@@ -65,7 +65,7 @@
 
     public void DeleteCompany()
     {
-        _db.Companies.Remove(LocalCompany);
+        LocalCompany.IsDeleted = true;
         _db.SaveChanges();
         NavigationManager.NavigateTo("/");
     }

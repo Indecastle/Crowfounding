@@ -13,7 +13,9 @@
 @if (!IsLoaded || IsLoaded && Model.Any())
 {
     <div class="row">
-        @foreach (var company in Model.OrderByDescending(s => s.Rating).Take(3))
+        @foreach (var company in Model
+            .Where(c => !c.IsEnd)
+            .OrderByDescending(s => s.Rating).Take(3))
         {
             <div class="col-sm-6 col-md-4 my-grid">
                 <div class="img-thumbnail text-center">
@@ -80,7 +82,7 @@ else
     {
         await base.OnInitializedAsync();
 
-        Model = await _db.Companies.ToListAsync();
+        Model = await _db.Companies.Where(company => !company.IsDeleted).ToListAsync();
         SortData(null);
         IsLoaded = true;
     }

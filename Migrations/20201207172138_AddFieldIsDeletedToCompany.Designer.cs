@@ -4,14 +4,16 @@ using Crowfounding.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Crowfounding.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201207172138_AddFieldIsDeletedToCompany")]
+    partial class AddFieldIsDeletedToCompany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -589,8 +591,7 @@ namespace Crowfounding.Migrations
                 {
                     b.HasOne("Crowfounding.Models.Company", "Company")
                         .WithMany("Transactions")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("Crowfounding.Models.User", "User")
                         .WithMany("Transactions")

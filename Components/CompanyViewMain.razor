@@ -9,7 +9,7 @@
 @if (LocalCompany != null)
 {
     <div class="row">
-        @if (LocalCompany.UserID == User?.Id && LocalCompany.IsEnd)
+        @if (LocalCompany.UserID == User?.Id && LocalCompany.IsEnd && !LocalCompany.IsDeleted)
         {
             <div class="m-auto">
                 <button class="btn btn-danger" @onclick="RedirectToTakeMoney">@L["Main_TakeMoney"]</button>

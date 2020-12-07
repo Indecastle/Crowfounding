@@ -46,7 +46,7 @@ namespace Crowfounding.BackroundJob
                 DateTime date = DateTime.Now;
                 foreach(Company company in _context.Companies.Where(c => !c.IsEnd))
                 {
-                    Company comp = _context.Companies.Find(company.Id);
+                    // Company comp = _context.Companies.Find(company.Id);
                     if (CompanyBusinessLogic.EndCompanyIfTime(company))
                         _logger.LogInformation($"Company '{company.Name}' is ended");
                 }
