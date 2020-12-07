@@ -17,7 +17,7 @@
 <div class="container ">
     <div class="row ">
         <div class="col-md-3" style="margin-bottom: 10px;">
-            <button type="button" class="btn btn-outline-info @(Comments.Any(m => m.Selecting) ? "":"mydisable")" @onclick="@RemoveSelectedComments">@L["Comment_Remove Comment"]</button>
+            <button type="button" class="btn btn-outline-info @(Comments.Any(m => m.Selecting) ? "" : "mydisable")" @onclick="@RemoveSelectedComments">@L["Comment_Remove Comment"]</button>
         </div>
         <div class="col-md-6  " id="chat">
             @if (Comments != null)
@@ -25,7 +25,6 @@
                 string contcolor;
                 @foreach (var comment in Comments.OrderBy(m => m.When))
                 {
-
                     if (user.UserName == comment.UserName)
                     {
                         contcolor = comment.Selecting ? "bg-info" : "bg-primary";
@@ -43,6 +42,15 @@
                             <span class="time-left text-light">@comment.When.ToString()</span>
                         </div>
                     }
+                    else if (!IsMember)
+                    {
+                        contcolor = comment.Selecting ? "bg-gradient-light" : "bg-light";
+                        <div class="container @contcolor" @onmousedown="@(e => SelectComment(comment))">
+                            <p class="sender text-left comment-sender">@comment.UserName</p>
+                            <div class="text-left text-dark comment-text">@ChatHelper.ConvertUrl(comment)</div>
+                            <span class="time-left">@comment.When.ToString()</span>
+                        </div>
+                    }
                     else
                     {
                         <div class="container bg-light">
@@ -56,10 +64,10 @@
         </div>
     </div>
     <div class="col-md-12">
-        <button type="button" class="btn btn-secondary @(IsEditing ? "":"mydisable")" style="margin-bottom: 10px;" @onclick="@StopEditComment">@L["Comment_StopChange"]</button>
+        <button type="button" class="btn btn-secondary @(IsEditing ? "" : "mydisable")" style="margin-bottom: 10px;" @onclick="@StopEditComment">@L["Comment_StopChange"]</button>
         <form method="post" action="#" enctype="multipart/form-data">
             <label class="fileContainer mydisable" id="fileSelectBox" ondragleave="leaveDrop2(event)" ondrop="onDrop(event)" ondragover="dragOver(event)">
-                <InputFile multiple OnChange="ViewFile" />
+                <InputFile multiple OnChange="ViewFile"/>
             </label>
         </form>
         <textarea id="chatSend" class="form-control" style="resize:none;" name="chat_comment" ondragover="dragOver2(event)" placeholder="@L["Comment_SendComment"]" rows="3" @bind-value="@newComment" @bind-value:event="oninput"></textarea>
@@ -69,20 +77,21 @@
 </div>
 
 
-
-
-
-
 @code {
+
     [Parameter]
     public Company LocalCompany { get; set; }
+
     public Company TotalCompany { get; set; }
+
     [Parameter]
     public User user { get; set; }
 
+    private bool IsMember { get; set; }
 
     [Parameter]
     public string chatId { get; set; }
+
     //public GroupChat groupChat { get; set; }
     private List<Comment> Comments { get; set; } = new List<Comment>();
 
@@ -103,6 +112,10 @@
 
         _chatService.InitChat();
         Comments = _chatService.LocalComments;
+
+        IsMember = !(await _userManager.IsInRoleAsync(user, "SuperAdmin")
+                     || await _userManager.IsInRoleAsync(user, "Admin")
+                     || await _userManager.IsInRoleAsync(user, "Moderator"));
     }
 
     public void Dispose()
@@ -124,7 +137,6 @@
     }
 
 
-
     public void GotComment(Comment newComment, object sender)
     {
         _chatService.GotComment(newComment, sender);
@@ -143,7 +155,6 @@
         _chatService.ChangedComment(textComment, editingComment);
         InvokeAsync(StateHasChanged);
     }
-
 
 
     public async Task SendAll(MouseEventArgs e)
@@ -195,17 +206,9 @@
     }
 
 
-
-
-
-
-
-
-
-
     private string Token { get; set; }
-    const string DefaultStatus = "Drop a text file here to view it, or click to choose a file";
-    const int MaxFileSize = 5 * 1024 * 1024; // 5MB
+        const string DefaultStatus = "Drop a text file here to view it, or click to choose a file";
+        const int MaxFileSize = 5 * 1024 * 1024; // 5MB
     string status = DefaultStatus;
     string UrlShared;
 
@@ -239,11 +242,11 @@
                 Console.WriteLine("######### UploadedToS3");
 
                 _chatService.UploadImageComment(urlLink, file.Name);
-
             }
 
             status = DefaultStatus;
         }
         await InvokeAsync(StateHasChanged);
     }
+
 }
