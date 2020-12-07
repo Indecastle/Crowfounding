@@ -109,10 +109,10 @@
             Comparison<UserBonuse> comparison = null;
             switch (sort.SortId)
             {
-                case "title":
+                case "bonusTitle":
                     comparison = (s1, s2) => string.Compare(s1.Bonuse.Title, s2.Bonuse.Title, StringComparison.InvariantCultureIgnoreCase);
                     break;
-                case "company_name":
+                case "companyName":
                     comparison = (s1, s2) => string.Compare(s1.Company.Name, s2.Company.Name, StringComparison.InvariantCultureIgnoreCase);
                     break;
                 case "needMoney":
