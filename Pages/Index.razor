@@ -82,7 +82,7 @@ else
     {
         await base.OnInitializedAsync();
 
-        Model = await _db.Companies.Where(company => !company.IsDeleted).ToListAsync();
+        Model = await _db.Companies.Where(company => !company.IsDeleted && !company.IsEnd).ToListAsync();
         SortData(null);
         IsLoaded = true;
     }
