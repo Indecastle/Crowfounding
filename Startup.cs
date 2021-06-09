@@ -20,12 +20,8 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using Crowfounding.BackroundJob;
 using System.Net.Http;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using MatBlazor;
 using Crowfounding.Services.Finances;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OAuth;
 
 namespace Crowfounding
 {
@@ -50,11 +46,11 @@ namespace Crowfounding
             services.AddIdentity<User, IdentityRole>(opts =>
             {
                 //opts.Cookies.ApplicationCookie.AccessDeniedPath = new PathString("/InactiveSponsor");
-                opts.Password.RequiredLength = 5;   // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-                opts.Password.RequireNonAlphanumeric = false;   // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-                opts.Password.RequireLowercase = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-                opts.Password.RequireUppercase = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-                opts.Password.RequireDigit = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+                opts.Password.RequiredLength = 5;   // минимальная длина
+                opts.Password.RequireNonAlphanumeric = false;   // требуются ли не алфавитно-цифровые символы
+                opts.Password.RequireLowercase = false; // требуются ли символы в нижнем регистре
+                opts.Password.RequireUppercase = false; // требуются ли символы в верхнем регистре
+                opts.Password.RequireDigit = false; // требуются ли цифры
 
                 opts.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 opts.Lockout.MaxFailedAccessAttempts = 5;
@@ -71,56 +67,24 @@ namespace Crowfounding
                     IConfigurationSection googleAuthNSection =
                         Configuration.GetSection("Auth:Google");
 
-                    options.ClientId = Configuration["GOOGLE_CLIENT_ID"]; //googleAuthNSection["client_id"];
-                    options.ClientSecret = Configuration["GOOGLE_CLIENT_SECRET"]; //googleAuthNSection["client_secret"];
+                    options.ClientId = googleAuthNSection["client_id"];
+                    options.ClientSecret = googleAuthNSection["client_secret"];
                     //options.ReturnUrlParameter = googleAuthNSection["redirect_uris"];
                     options.CallbackPath = new PathString("/Identity/Account/GoogleLoginCallback");
                 })
-                // .AddOAuth("VK", "Vkontakte", options =>
-                // {
-                //     IConfigurationSection vkAuthNSection =
-                //         Configuration.GetSection("Auth:VK");
-                //     
-                //     options.ClientId = vkAuthNSection["client_id"];
-                //     options.ClientSecret = vkAuthNSection["client_secret"];
-                //     options.ClaimsIssuer = "Vkontakte";
-                //     options.CallbackPath = new PathString("/signin-vkontakte");
-                //     options.AuthorizationEndpoint = "https://oauth.vk.com/authorise";
-                //     options.TokenEndpoint = "https://oauth.vk.com/access_token";
-                //     // options.Scope.Add("email");
-                //     options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "user_id");
-                //     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
-                //     options.SaveTokens = true;
-                //     options.Events = new OAuthEvents()
-                //     {
-                //         OnCreatingTicket = context =>
-                //         {
-                //             context.RunClaimActions(context.TokenResponse.Response.RootElement);
-                //             return Task.CompletedTask;
-                //         }
-                //     };
-                // })
                 .AddVkontakte(options =>
                 {
                     IConfigurationSection vkAuthNSection =
                         Configuration.GetSection("Auth:VK");
 
-                    options.ClientId = Configuration["VK_CLIENT_ID"];
-                    options.ClientSecret = Configuration["VK_CLIENT_SECRET"];
-                    // options.CallbackPath = new PathString("/Identity/Account/GoogleLoginCallback");
+                    options.ClientId = vkAuthNSection["client_id"];
+                    options.ClientSecret = vkAuthNSection["client_secret"];
+                    //options.CallbackPath = new PathString("/VKLoginCallback");
                     //options.ApiVersion = "5.103";
                     //options.Fields.Add("grant_type=client_credentials");
                 });
 
-            services.Configure<EmailSettings>(options =>
-            {
-                options.MailServer = Configuration["EMAIL_MailServer"];
-                options.MailPort = 465;
-                options.SenderName = "Confirm mail";
-                options.SenderEmail = Configuration["EMAIL_SenderEmail"];
-                options.SenderPassword = Configuration["EMAIL_SenderPassword"];
-                options.Password = Configuration["EMAIL_Password"];
-            });
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
             services.AddSingleton<IEmailSender, EmailSender>();
 
             services.AddRazorPages();
@@ -135,7 +99,7 @@ namespace Crowfounding
                     options.DataAnnotationLocalizerProvider = (type, factory) =>
                         factory.Create(typeof(SharedResource));
                 })
-                .AddViewLocalization();// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ;
+                .AddViewLocalization();// добавляем локализацию представлений;
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             var supportedCultures = new List<CultureInfo> { new CultureInfo("ru"), new CultureInfo("en") };
             services.Configure<RequestLocalizationOptions>(options =>
@@ -145,7 +109,7 @@ namespace Crowfounding
                 options.SupportedUICultures = supportedCultures;
             });
             var cultureInfo = new CultureInfo("en-US");
-            cultureInfo.NumberFormat.CurrencySymbol = "пїЅ";
+            cultureInfo.NumberFormat.CurrencySymbol = "€";
 
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
